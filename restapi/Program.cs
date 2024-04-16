@@ -13,6 +13,9 @@ builder.Services.AddAuthorization();
 
 // Get connection from Environment
 var connectionString = Environment.GetEnvironmentVariable("CONNSTRING");
+Console.WriteLine("===========");
+Console.WriteLine($"CONNSTRING: {connectionString}");
+Console.WriteLine("===========");
 
 // Configure DbContext with PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
