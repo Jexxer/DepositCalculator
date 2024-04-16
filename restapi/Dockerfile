@@ -1,12 +1,12 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-preview AS base
-WORKDIR /app
+WORKDIR ./restapi/app
 EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0-preview AS build
-WORKDIR /src
+WORKDIR .restapi/src
 COPY ["./restapi/restapi.csproj", "."]
 RUN dotnet restore "./restapi/restapi.csproj"
 COPY ./restapi/ .
