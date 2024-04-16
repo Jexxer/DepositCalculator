@@ -25,7 +25,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddUserManager<CustomUserManager>()
-.AddDefaultTokenProviders()
 .AddDefaultUI();
 
 // Add AutoMapper
