@@ -18,5 +18,5 @@ RUN dotnet publish "restapi.csproj" -c Release -o ./restapi/app/publish /p:UseAp
 
 FROM base AS final
 WORKDIR ./restapi/app
-COPY --from=publish /publish .
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "restapi.dll"]
