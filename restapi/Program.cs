@@ -22,9 +22,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     // Configure identity options if needed
+    options.SignIn.RequireConfirmedEmail = false;
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddUserManager<CustomUserManager>()
+.AddDefaultTokenProviders()
 .AddDefaultUI();
 
 // Add AutoMapper
