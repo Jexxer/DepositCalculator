@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0-preview AS build
 WORKDIR /src
-COPY ["restapi.csproj", "."]
-RUN dotnet restore "./restapi.csproj"
-COPY . .
+COPY ["./restapi/restapi.csproj", "."]
+RUN dotnet restore "./restapi/restapi.csproj"
+COPY ./restapi/ .
 WORKDIR "/src/."
-RUN dotnet build "restapi.csproj" -c Release -o /app/build
+RUN dotnet build "./restapi/restapi.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "restapi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./restapi/restapi.csproj" -c Release -o ./restapi/app/publish /p:UseAppHost=false
 
 FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+WORKDIR ./restapi/app
+COPY --from=publish ./restapi/app/publish .
 ENTRYPOINT ["dotnet", "restapi.dll"]
