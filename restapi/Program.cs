@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthorization();
 
 // Configure the Services
-builder.Services.Configure<CookiePolicyOptions>(options =>
+builder.Services.PostConfigure<CookiePolicyOptions>(options =>
 {
     options.MinimumSameSitePolicy = SameSiteMode.None;
 });
