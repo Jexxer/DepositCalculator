@@ -7,7 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0-preview AS build
 WORKDIR /src
-COPY ["./restapi.csproj", "."]
+COPY ["./restapi/restapi.csproj", "."]
 RUN dotnet restore "restapi.csproj"
 COPY ./restapi/ .
 WORKDIR "/src/."
