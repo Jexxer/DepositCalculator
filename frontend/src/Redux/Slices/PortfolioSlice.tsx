@@ -3,8 +3,8 @@ import { PortfolioType } from "@/Types";
 import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState: PortfolioType = {
-  id: null,
-  name: null,
+  id: 0,
+  name: "",
   bankAccounts: [],
   budgets: [],
   expenses: [],
