@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/jcode/dev/financeApp/restapi/restapi.csproj": {}
+    "/Users/jcode/dev/DepositCalculator/restapi/restapi.csproj": {}
   },
   "projects": {
-    "/home/jcode/dev/financeApp/restapi/restapi.csproj": {
+    "/Users/jcode/dev/DepositCalculator/restapi/restapi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/jcode/dev/financeApp/restapi/restapi.csproj",
+        "projectUniqueName": "/Users/jcode/dev/DepositCalculator/restapi/restapi.csproj",
         "projectName": "restapi",
-        "projectPath": "/home/jcode/dev/financeApp/restapi/restapi.csproj",
-        "packagesPath": "/home/jcode/.nuget/packages/",
-        "outputPath": "/home/jcode/dev/financeApp/restapi/obj/",
+        "projectPath": "/Users/jcode/dev/DepositCalculator/restapi/restapi.csproj",
+        "packagesPath": "/Users/jcode/.nuget/packages/",
+        "outputPath": "/Users/jcode/dev/DepositCalculator/restapi/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/jcode/.nuget/NuGet/NuGet.Config"
+          "/Users/jcode/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -32,11 +32,6 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
         }
       },
       "frameworks": {
@@ -101,7 +96,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/jcode/.dotnet/sdk/8.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.204/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
