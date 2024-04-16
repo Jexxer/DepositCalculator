@@ -11,11 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Authorization
 builder.Services.AddAuthorization();
 
+// Configure the Services
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
+
 // Get connection from Environment
 var connectionString = Environment.GetEnvironmentVariable("CONNSTRING");
-Console.WriteLine("===========");
-Console.WriteLine($"CONNSTRING: {connectionString}");
-Console.WriteLine("===========");
 
 // Configure DbContext with PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
