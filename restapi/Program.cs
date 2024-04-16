@@ -4,6 +4,7 @@ using restapi.Data;
 using restapi.Endpoints;
 using restapi.Models;
 using restapi.Managers;
+using Microsoft.AspNetCore.CookiePolicy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,9 +13,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthorization();
 
 // Configure the Services
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.HttpOnly = HttpOnlyPolicy.Always;
+    options.Secure = CookieSecurePolicy.Always;
+
+});
+
 builder.Services.PostConfigure<CookiePolicyOptions>(options =>
 {
     options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.HttpOnly = HttpOnlyPolicy.Always;
+    options.Secure = CookieSecurePolicy.Always;
 });
 
 // Get connection from Environment
