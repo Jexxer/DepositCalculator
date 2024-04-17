@@ -12,12 +12,7 @@ function App() {
   return (
     <>
       <SiteShell />
-      <Grid
-        container
-        spacing={2}
-        height={{ sm: "auto", md: "100%" }}
-        sx={{ p: 2, maxHeight: "calc(100% - 48px)" }}
-      >
+      <Grid container spacing={2} sx={{ p: 2 }}>
         <Box
           component={Grid}
           item

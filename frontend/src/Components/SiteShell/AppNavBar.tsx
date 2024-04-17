@@ -13,7 +13,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Example() {
+export default function AppNavBar() {
   return (
     <Disclosure as="nav" className="bg-[#1E5D81]">
       {({ open }) => (
