@@ -18,7 +18,6 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
     options.MinimumSameSitePolicy = SameSiteMode.None;
     options.HttpOnly = HttpOnlyPolicy.Always;
     options.Secure = CookieSecurePolicy.Always;
-
 });
 
 builder.Services.PostConfigure<CookiePolicyOptions>(options =>
