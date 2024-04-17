@@ -386,6 +386,7 @@ const Overview = (props: Props) => {
         alignItems="center"
         paddingTop={2}
         paddingX={2}
+        paddingBottom={expenses.length > 0 ? 0 : 2}
       >
         <Typography variant="h6">Direct deposits</Typography>
         <Stack spacing={1} direction="row" alignItems="center">
