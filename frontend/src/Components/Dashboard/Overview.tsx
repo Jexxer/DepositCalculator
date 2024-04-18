@@ -461,6 +461,7 @@ const Overview = (props: Props) => {
                       </Stack>
                       <Divider />
                       {checkings.map((b) => {
+                        if (b.isRemainder) return;
                         let amount = Dinero({ amount: 0, currency: "USD" });
                         if (expenseSplit === "income") {
                           amount = getDepositAmountIncome(income, b, portfolio);
@@ -516,7 +517,7 @@ const Overview = (props: Props) => {
                       <Stack spacing={1} direction="row" width="100%">
                         <CelebrationTwoToneIcon color="success" />
                         <Typography width="60%" variant="body1">
-                          Remainder
+                          {income.bankAccount.name || "Remainder"}
                         </Typography>
                         <Typography width="40%" variant="body1">
                           {incomeAmount
