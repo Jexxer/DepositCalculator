@@ -91,7 +91,7 @@ const AddPortfolioForm = (props: IncomeFormProps) => {
   };
 
   return (
-    <Stack sx={{ ...modalStyle, minWidth: 500 }} spacing={3}>
+    <Stack sx={{ ...modalStyle }} spacing={3}>
       <Typography variant="h6">Portfolio name</Typography>
       <Stack
         direction="row"
