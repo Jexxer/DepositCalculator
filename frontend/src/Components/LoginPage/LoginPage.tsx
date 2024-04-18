@@ -89,11 +89,11 @@ export default function SignIn() {
             Sign In
           </Button>
           <Grid container>
-            <Grid item xs>
-              <Link to="#" className="text-blue-500">
-                Forgot password?
-              </Link>
-            </Grid>
+            {/* <Grid item xs> */}
+            {/*   <Link to="#" className="text-blue-500"> */}
+            {/*     Forgot password? */}
+            {/*   </Link> */}
+            {/* </Grid> */}
             <Grid item>
               <Link to="/register" className="text-blue-500">
                 {"Don't have an account? Sign Up"}
