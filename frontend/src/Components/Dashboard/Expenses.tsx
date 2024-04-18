@@ -137,6 +137,7 @@ const Expenses = (props: Props) => {
           <Select
             id="bank-select-filled"
             value={params.value}
+            name="bank-select"
             onChange={handleChange}
             sx={{
               width: "100%",

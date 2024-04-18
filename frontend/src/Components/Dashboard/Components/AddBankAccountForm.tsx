@@ -71,15 +71,14 @@ const AddBankAccountForm = (props: BankAccountFormProps) => {
         }}
       />
       <FormControl fullWidth>
-        <InputLabel id="bank-account-type-select-label">
+        <InputLabel htmlFor="bank-account-type-select-label">
           Account Type
         </InputLabel>
         <Select
-          labelId="bank-account-type-select-label"
-          id="bank-account-type-select"
           value={formData.type.toString()}
           label="Account Type"
           disabled={savings ? true : false}
+          inputProps={{ id: "bank-account-type-select-label" }}
           onChange={(e: SelectChangeEvent) => {
             setFormData((prev) => {
               return {

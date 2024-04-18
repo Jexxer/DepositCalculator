@@ -97,12 +97,11 @@ const EditExpenseForm = (props: ExpenseFormProps) => {
         }}
       />
       <FormControl fullWidth>
-        <InputLabel id="bil-frequency-select-label">Frequency</InputLabel>
+        <InputLabel htmlFor="bil-frequency-select-label">Frequency</InputLabel>
         <Select
-          labelId="bil-frequency-select-label"
-          id="bank-account-type-select"
           value={formData.frequency.toString()}
           label="Account Type"
+          inputProps={{ id: "bil-frequency-select-label" }}
           onChange={(e: SelectChangeEvent) => {
             setFormData((prev) => {
               return {
@@ -120,14 +119,13 @@ const EditExpenseForm = (props: ExpenseFormProps) => {
         </Select>
       </FormControl>
       <FormControl fullWidth>
-        <InputLabel id="bank-account-type-select-label">
+        <InputLabel htmlFor="bank-account-type-select-label">
           Bank Account
         </InputLabel>
         <Select
-          labelId="bank-account-type-select-label"
-          id="bank-account-type-select"
           value={formData.bankAccountId.toString()}
           label="Account Type"
+          inputProps={{ id: "bank-account-type-select-label" }}
           onChange={(e: SelectChangeEvent) => {
             setFormData((prev) => {
               return {

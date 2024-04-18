@@ -112,13 +112,13 @@ const AddIncomeForm = (props: IncomeFormProps) => {
         }}
       />
       <FormControl fullWidth>
-        <InputLabel id="pay-frequency-select-label">Pay Frequency</InputLabel>
+        <InputLabel htmlFor="income-edit-pay-freq-label">
+          Pay Frequency
+        </InputLabel>
         <Select
-          name="pay-frequency-select"
-          labelId="pay-frequency-select-label"
-          id="pay-frequency-select"
           value={formData.payFrequency.toString()}
           label="Pay Frequency"
+          inputProps={{ id: "income-edit-pay-freq-label" }}
           onChange={(e: SelectChangeEvent) => {
             setFormData((prev) => {
               return {
@@ -144,15 +144,14 @@ const AddIncomeForm = (props: IncomeFormProps) => {
         alignItems="center"
       >
         <FormControl fullWidth required>
-          <InputLabel id="pay-frequency-select-label">
+          <InputLabel htmlFor="income-edit-remain-label">
             Remaining funds account
           </InputLabel>
           <Select
             size="small"
-            labelId="pay-frequency-select-label"
-            id="pay-frequency-select"
             value={formData.bankAccountId?.toString() || ""}
             label="Remaining funds account"
+            inputProps={{ id: "income-edit-remain-label" }}
             onChange={(e: SelectChangeEvent) => {
               setFormData((prev) => {
                 return {
@@ -187,6 +186,7 @@ const AddIncomeForm = (props: IncomeFormProps) => {
           <FormControlLabel
             control={
               <Checkbox
+                id="isInsurance-checkbox"
                 checked={formData.isInsuranceProvider}
                 onChange={(e) => {
                   if (!e.target.checked) {
