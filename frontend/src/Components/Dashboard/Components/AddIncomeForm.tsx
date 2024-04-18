@@ -65,7 +65,7 @@ const AddIncomeForm = (props: IncomeFormProps) => {
     portfolioId: portfolio.id,
     isInsuranceProvider: false,
     insuranceAmount: 0.0,
-    bankAccountId: undefined,
+    bankAccountId: checkingAccounts[0].id,
   });
 
   const handleSubmit = () => {
