@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import type {} from "@mui/x-data-grid/themeAugmentation";
+import Logout from "./Components/Logout/Logout.tsx";
 
 const darkTheme = createTheme({
   palette: {
@@ -137,6 +138,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/logout",
+    element: <Logout />,
   },
 ]);
 
