@@ -96,6 +96,26 @@ namespace restapi.Endpoints
                 existingIncome.Amount = income.Amount;
                 existingIncome.PayFrequency = income.PayFrequency;
                 existingIncome.IsInsuranceProvider = income.IsInsuranceProvider;
+
+                // get bank BankAccountId
+                var bankAccount = await dbContext.BankAccount
+                    .Where(b => b.Portfolio!.UserAccess.Any(u => u.Id == userId))
+                    .FirstOrDefaultAsync(b => b.Id == income.BankAccountId);
+                var existingBank = await dbContext.BankAccount.FindAsync(existingIncome.BankAccountId);
+
+                // replace current bank account with new bank account
+                if (bankAccount != null)
+                {
+                    bankAccount.IsRemainder = true;
+                }
+                if (existingBank != null)
+                {
+                    existingBank.IsRemainder = false;
+                }
+
+
+                existingIncome.BankAccountId = income.BankAccountId;
+                existingIncome.BankAccount = bankAccount;
                 if (income.IsInsuranceProvider)
                 {
                     existingIncome.InsuranceAmount = income.InsuranceAmount;

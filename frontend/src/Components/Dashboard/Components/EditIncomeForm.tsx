@@ -32,6 +32,7 @@ type FormDataType = {
   portfolioId: number | null;
   isInsuranceProvider: boolean;
   insuranceAmount: number;
+  bankAccountId: number | undefined;
 };
 
 const payFrequencies = [
@@ -58,6 +59,8 @@ const AddIncomeForm = (props: IncomeFormProps) => {
   const { setOpen, initialFormData } = props;
   const dispatch = useAppDispatch();
   const portfolio = useAppSelector((state) => state.portfolio);
+  const bankAccounts = portfolio.bankAccounts;
+  const checkingAccounts = bankAccounts.filter((b) => b.type === 0);
   const [formData, setFormData] = useState<FormDataType>({
     id: initialFormData.id,
     name: initialFormData.name,
@@ -66,6 +69,7 @@ const AddIncomeForm = (props: IncomeFormProps) => {
     portfolioId: portfolio.id,
     isInsuranceProvider: initialFormData.isInsuranceProvider,
     insuranceAmount: initialFormData.insuranceAmount,
+    bankAccountId: initialFormData.bankAccount.id,
   });
 
   const handleSubmit = () => {
@@ -132,6 +136,47 @@ const AddIncomeForm = (props: IncomeFormProps) => {
         </Select>
       </FormControl>
       <Divider />
+      <Stack
+        spacing={2}
+        direction="row"
+        width="100%"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <FormControl fullWidth required>
+          <InputLabel id="pay-frequency-select-label">
+            Remaining funds account
+          </InputLabel>
+          <Select
+            size="small"
+            labelId="pay-frequency-select-label"
+            id="pay-frequency-select"
+            value={formData.bankAccountId?.toString() || ""}
+            label="Remaining funds account"
+            onChange={(e: SelectChangeEvent) => {
+              setFormData((prev) => {
+                return {
+                  ...prev,
+                  bankAccountId: parseInt(e.target.value),
+                };
+              });
+            }}
+          >
+            {checkingAccounts.map((c) => (
+              <MenuItem key={`pay-frequency-${c.id}`} value={c.id}>
+                {c.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Box>
+          <Tooltip title="The account you want the remaining funds to go into. This can be changed at anytime.">
+            <IconButton size="small" sx={{ backgroundColor: "#D8E8EB" }}>
+              <QuestionMarkIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      </Stack>
       <Stack
         direction="row"
         spacing={2}
