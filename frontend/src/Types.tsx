@@ -13,6 +13,7 @@ export type IncomeType = {
   portfolioId: number;
   isInsuranceProvider: boolean;
   insuranceAmount: number;
+  bankAccountId: number;
 };
 
 export type ExpenseType = {
