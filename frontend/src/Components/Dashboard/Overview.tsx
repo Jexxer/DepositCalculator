@@ -524,7 +524,7 @@ const Overview = (props: Props) => {
                       <Stack spacing={1} direction="row" width="100%">
                         <CelebrationTwoToneIcon color="success" />
                         <Typography width="60%" variant="body1">
-                          {income.bankAccount.name || "Remainder"}
+                          {income.bankAccount?.name || "Remainder"}
                         </Typography>
                         <Typography width="40%" variant="body1">
                           {incomeAmount
