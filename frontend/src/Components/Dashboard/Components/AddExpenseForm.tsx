@@ -52,6 +52,7 @@ const EditExpenseForm = (props: ExpenseFormProps) => {
     () => bankAccounts.filter((b) => b.type === 0),
     [bankAccounts],
   );
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<ExpenseFormData>({
     name: "",
     amount: 0.0,
@@ -60,13 +61,15 @@ const EditExpenseForm = (props: ExpenseFormProps) => {
     portfolioId: portfolio.id,
   });
 
-  const handleSubmit = () => {
-    axiosInstance.post(`/expenses`, formData).then((res) => {
+  const handleSubmit = async () => {
+    setBtnDisabled(true);
+    await axiosInstance.post(`/expenses`, formData).then((res) => {
       if (res.status === 201) {
         dispatch(fetchPortfolio());
         setOpen(false);
       }
     });
+    setBtnDisabled(false);
   };
   return (
     <Stack sx={modalStyle} spacing={2}>
@@ -142,7 +145,7 @@ const EditExpenseForm = (props: ExpenseFormProps) => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleSubmit} variant="contained">
+      <Button disabled={btnDisabled} onClick={handleSubmit} variant="contained">
         Add Expense
       </Button>
       <Button onClick={() => setOpen(false)} variant="contained" color="error">

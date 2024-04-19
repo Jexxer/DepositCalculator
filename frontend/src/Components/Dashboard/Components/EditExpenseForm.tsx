@@ -47,7 +47,7 @@ const frequencies = [
 const EditExpenseForm = (props: ExpenseFormProps) => {
   const { setOpen, initialFormData } = props;
   const dispatch = useAppDispatch();
-
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<ExpenseFormData>({
     id: initialFormData.id,
     name: initialFormData.name,
@@ -61,13 +61,17 @@ const EditExpenseForm = (props: ExpenseFormProps) => {
     [bankAccounts],
   );
 
-  const handleSubmit = () => {
-    axiosInstance.put(`/expenses/${formData.id}`, formData).then((res) => {
-      if (res.status === 200) {
-        dispatch(fetchPortfolio());
-        setOpen(false);
-      }
-    });
+  const handleSubmit = async () => {
+    setBtnDisabled(true);
+    await axiosInstance
+      .put(`/expenses/${formData.id}`, formData)
+      .then((res) => {
+        if (res.status === 200) {
+          dispatch(fetchPortfolio());
+          setOpen(false);
+        }
+      });
+    setBtnDisabled(false);
   };
   return (
     <Stack sx={modalStyle} spacing={2}>
@@ -143,7 +147,7 @@ const EditExpenseForm = (props: ExpenseFormProps) => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleSubmit} variant="contained">
+      <Button disabled={btnDisabled} onClick={handleSubmit} variant="contained">
         Save Changes
       </Button>
       <Button onClick={() => setOpen(false)} variant="contained" color="error">

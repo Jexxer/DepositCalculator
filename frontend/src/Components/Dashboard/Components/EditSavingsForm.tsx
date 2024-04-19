@@ -34,6 +34,7 @@ const EditSavingsForm = (props: SavingsFormProps) => {
   const { setOpen, initialFormData } = props;
   const dispatch = useAppDispatch();
   const portfolio = useAppSelector((state) => state.portfolio);
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormDataType>({
     amount: initialFormData.amount,
     id: initialFormData.id,
@@ -60,13 +61,15 @@ const EditSavingsForm = (props: SavingsFormProps) => {
       }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setBtnDisabled(true);
     axiosInstance.put(`/bankaccounts/${formData.id}`, formData).then((res) => {
       if (res.status === 200) {
         dispatch(fetchPortfolio());
         setOpen(false);
       }
     });
+    setBtnDisabled(false);
   };
   return (
     <Stack sx={modalStyle} spacing={2}>
@@ -160,7 +163,7 @@ const EditSavingsForm = (props: SavingsFormProps) => {
           }}
         />
       )}
-      <Button onClick={handleSubmit} variant="contained">
+      <Button disabled={btnDisabled} onClick={handleSubmit} variant="contained">
         Save Changes
       </Button>
       <Button onClick={() => setOpen(false)} variant="contained" color="error">
