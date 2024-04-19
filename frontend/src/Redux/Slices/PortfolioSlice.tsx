@@ -5,6 +5,7 @@ import { PayloadAction, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 const initialState: PortfolioType = {
   id: 0,
   name: "",
+  splitMethod: null,
   bankAccounts: [],
   budgets: [],
   expenses: [],

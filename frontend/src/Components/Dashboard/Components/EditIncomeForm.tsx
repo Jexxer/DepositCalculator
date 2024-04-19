@@ -32,6 +32,7 @@ type FormDataType = {
   portfolioId: number | null;
   isInsuranceProvider: boolean;
   insuranceAmount: number;
+  bankAccountId: number | undefined;
 };
 
 const payFrequencies = [
@@ -58,6 +59,9 @@ const AddIncomeForm = (props: IncomeFormProps) => {
   const { setOpen, initialFormData } = props;
   const dispatch = useAppDispatch();
   const portfolio = useAppSelector((state) => state.portfolio);
+  const bankAccounts = portfolio.bankAccounts;
+  const checkingAccounts = bankAccounts.filter((b) => b.type === 0);
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormDataType>({
     id: initialFormData.id,
     name: initialFormData.name,
@@ -66,15 +70,18 @@ const AddIncomeForm = (props: IncomeFormProps) => {
     portfolioId: portfolio.id,
     isInsuranceProvider: initialFormData.isInsuranceProvider,
     insuranceAmount: initialFormData.insuranceAmount,
+    bankAccountId: initialFormData.bankAccount.id,
   });
 
-  const handleSubmit = () => {
-    axiosInstance.put(`/incomes/${formData.id}`, formData).then((res) => {
+  const handleSubmit = async () => {
+    setBtnDisabled(true);
+    await axiosInstance.put(`/incomes/${formData.id}`, formData).then((res) => {
       if (res.status === 200) {
         dispatch(fetchPortfolio());
         setOpen(false);
       }
     });
+    setBtnDisabled(false);
   };
   return (
     <Stack sx={modalStyle} spacing={2}>
@@ -108,13 +115,13 @@ const AddIncomeForm = (props: IncomeFormProps) => {
         }}
       />
       <FormControl fullWidth>
-        <InputLabel id="pay-frequency-select-label">Pay Frequency</InputLabel>
+        <InputLabel htmlFor="income-edit-pay-freq-label">
+          Pay Frequency
+        </InputLabel>
         <Select
-          name="pay-frequency-select"
-          labelId="pay-frequency-select-label"
-          id="pay-frequency-select"
           value={formData.payFrequency.toString()}
           label="Pay Frequency"
+          inputProps={{ id: "income-edit-pay-freq-label" }}
           onChange={(e: SelectChangeEvent) => {
             setFormData((prev) => {
               return {
@@ -133,6 +140,46 @@ const AddIncomeForm = (props: IncomeFormProps) => {
       </FormControl>
       <Divider />
       <Stack
+        spacing={2}
+        direction="row"
+        width="100%"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <FormControl fullWidth required>
+          <InputLabel htmlFor="income-edit-remain-label">
+            Remaining funds account
+          </InputLabel>
+          <Select
+            size="small"
+            value={formData.bankAccountId?.toString() || ""}
+            label="Remaining funds account"
+            inputProps={{ id: "income-edit-remain-label" }}
+            onChange={(e: SelectChangeEvent) => {
+              setFormData((prev) => {
+                return {
+                  ...prev,
+                  bankAccountId: parseInt(e.target.value),
+                };
+              });
+            }}
+          >
+            {checkingAccounts.map((c) => (
+              <MenuItem key={`pay-frequency-${c.id}`} value={c.id}>
+                {c.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Box>
+          <Tooltip title="The account you want the remaining funds to go into. This can be changed at anytime.">
+            <IconButton size="small" sx={{ backgroundColor: "#D8E8EB" }}>
+              <QuestionMarkIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      </Stack>
+      <Stack
         direction="row"
         spacing={2}
         justifyContent="space-between"
@@ -142,6 +189,7 @@ const AddIncomeForm = (props: IncomeFormProps) => {
           <FormControlLabel
             control={
               <Checkbox
+                id="isInsurance-checkbox"
                 checked={formData.isInsuranceProvider}
                 onChange={(e) => {
                   if (!e.target.checked) {
@@ -184,7 +232,7 @@ const AddIncomeForm = (props: IncomeFormProps) => {
           }));
         }}
       />
-      <Button onClick={handleSubmit} variant="contained">
+      <Button disabled={btnDisabled} onClick={handleSubmit} variant="contained">
         Save Changes
       </Button>
       <Button onClick={() => setOpen(false)} variant="contained" color="error">

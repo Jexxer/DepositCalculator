@@ -41,20 +41,24 @@ const AddBankAccountForm = (props: BankAccountFormProps) => {
   const { setOpen, savings } = props;
   const dispatch = useAppDispatch();
   const portfolio = useAppSelector((state) => state.portfolio);
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormDataType>({
     name: "",
     portfolioId: portfolio.id,
     type: savings ? 1 : 0,
   });
 
-  const handleSubmit = () => {
-    axiosInstance.post("/bankaccounts", formData).then((res) => {
+  const handleSubmit = async () => {
+    setBtnDisabled(true);
+    await axiosInstance.post("/bankaccounts", formData).then((res) => {
       if (res.status === 200) {
         dispatch(fetchPortfolio());
         setOpen(false);
       }
     });
+    setBtnDisabled(false);
   };
+
   return (
     <Stack sx={modalStyle} spacing={2}>
       <Typography variant="h6">Add Bank Account</Typography>
@@ -71,15 +75,14 @@ const AddBankAccountForm = (props: BankAccountFormProps) => {
         }}
       />
       <FormControl fullWidth>
-        <InputLabel id="bank-account-type-select-label">
+        <InputLabel htmlFor="bank-account-type-select-label">
           Account Type
         </InputLabel>
         <Select
-          labelId="bank-account-type-select-label"
-          id="bank-account-type-select"
           value={formData.type.toString()}
           label="Account Type"
           disabled={savings ? true : false}
+          inputProps={{ id: "bank-account-type-select-label" }}
           onChange={(e: SelectChangeEvent) => {
             setFormData((prev) => {
               return {
@@ -96,7 +99,7 @@ const AddBankAccountForm = (props: BankAccountFormProps) => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleSubmit} variant="contained">
+      <Button disabled={btnDisabled} onClick={handleSubmit} variant="contained">
         Add Account
       </Button>
       <Button onClick={() => setOpen(false)} variant="contained" color="error">

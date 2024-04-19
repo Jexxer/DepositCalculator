@@ -27,12 +27,14 @@ const AddPortfolioForm = (props: IncomeFormProps) => {
   const dispatch = useAppDispatch();
   const portfolio = useAppSelector((state) => state.portfolio);
   const user = useAppSelector((state) => state.user);
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [portfolioName, setPortfolioName] = useState<string>(
     portfolio.name || "",
   );
   const [emailToAdd, setEmailToAdd] = useState<string>("");
 
   const handleNameChange = async () => {
+    setBtnDisabled(true);
     const res = await toast.promise(
       axiosInstance.put(
         `/portfolios/${portfolio.id}/name?name=${portfolioName}`,
@@ -47,9 +49,11 @@ const AddPortfolioForm = (props: IncomeFormProps) => {
       dispatch(updatePortfolio({ ...portfolio, name: portfolioName }));
       handleClose();
     }
+    setBtnDisabled(false);
   };
 
   const handleUserAccessAdd = async () => {
+    setBtnDisabled(true);
     // cannot add user already in user access
     if (
       portfolio.userAccess.some(
@@ -70,9 +74,11 @@ const AddPortfolioForm = (props: IncomeFormProps) => {
     if (res.status === 200) {
       dispatch(fetchPortfolio());
     }
+    setBtnDisabled(false);
   };
 
   const handleUserAccessRemove = async (u: UserType) => {
+    setBtnDisabled(true);
     // Cannot delete own useraccess
     if (u.email === user.email) return;
     const res = await toast.promise(
@@ -88,10 +94,11 @@ const AddPortfolioForm = (props: IncomeFormProps) => {
     if (res.status === 200) {
       dispatch(fetchPortfolio());
     }
+    setBtnDisabled(false);
   };
 
   return (
-    <Stack sx={{ ...modalStyle, minWidth: 500 }} spacing={3}>
+    <Stack sx={{ ...modalStyle }} spacing={3}>
       <Typography variant="h6">Portfolio name</Typography>
       <Stack
         direction="row"
@@ -107,7 +114,11 @@ const AddPortfolioForm = (props: IncomeFormProps) => {
           onChange={(e) => setPortfolioName(e.target.value)}
         />
 
-        <Button onClick={handleNameChange} variant="contained">
+        <Button
+          disabled={btnDisabled}
+          onClick={handleNameChange}
+          variant="contained"
+        >
           Update
         </Button>
       </Stack>
@@ -128,7 +139,11 @@ const AddPortfolioForm = (props: IncomeFormProps) => {
           onChange={(e) => setEmailToAdd(e.target.value)}
         />
 
-        <Button onClick={handleUserAccessAdd} variant="contained">
+        <Button
+          disabled={btnDisabled}
+          onClick={handleUserAccessAdd}
+          variant="contained"
+        >
           Add
         </Button>
       </Stack>
@@ -141,6 +156,7 @@ const AddPortfolioForm = (props: IncomeFormProps) => {
               <ListItem
                 secondaryAction={
                   <IconButton
+                    disabled={btnDisabled}
                     color="error"
                     onClick={() => handleUserAccessRemove(u)}
                   >

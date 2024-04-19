@@ -96,30 +96,36 @@ const Portfolios = (props: Props) => {
     getPortfolios();
   }, [dispatch]);
 
+  const randomID = Math.round(Math.random() * 100);
   return (
     <>
       <Paper {...paperProps}>
         <Stack spacing={2} direction="row">
-          <FormControl fullWidth>
-            <InputLabel id="portfolio-select-label">Portfolio</InputLabel>
-            {isPortfolioPresent && (
-              <Select
-                name="portfolio-select"
-                size="small"
-                labelId="portfolio-select-label"
-                id="portfolio-select"
-                value={portfolio.id?.toString() || ""}
-                label="Portfolio"
-                onChange={handleChange}
-              >
-                {portfolios.map((p) => (
-                  <MenuItem key={`portfolio-${p.id}`} value={p.id?.toString()}>
-                    {p.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            )}
-          </FormControl>
+          {isPortfolioPresent && (
+            <>
+              <FormControl fullWidth>
+                <InputLabel htmlFor={`portfolio-select-${randomID}`}>
+                  Portfolio
+                </InputLabel>
+                <Select
+                  size="small"
+                  label="Portfolio"
+                  value={portfolio.id?.toString() || ""}
+                  onChange={handleChange}
+                  inputProps={{ id: `portfolio-select-${randomID}` }}
+                >
+                  {portfolios.map((p) => (
+                    <MenuItem
+                      key={`portfolio-${p.id}`}
+                      value={p.id?.toString()}
+                    >
+                      {p.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          )}
           <Stack direction="row" spacing={1}>
             <Tooltip title="Edit current portfolio">
               <IconButton

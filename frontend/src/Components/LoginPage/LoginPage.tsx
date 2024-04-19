@@ -18,13 +18,15 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function SignIn() {
   const dispatch = useAppDispatch();
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    setBtnDisabled(true);
     e.preventDefault();
-    axiosInstance
+    await axiosInstance
       .post(
         "/login?useCookies=true",
         { email, password },
@@ -36,6 +38,7 @@ export default function SignIn() {
           navigate("/");
         }
       });
+    setBtnDisabled(false);
   };
 
   return (
@@ -81,6 +84,7 @@ export default function SignIn() {
             onChange={(e) => setPassword(e.target.value)}
           />
           <Button
+            disabled={btnDisabled}
             type="submit"
             fullWidth
             variant="contained"
@@ -89,11 +93,11 @@ export default function SignIn() {
             Sign In
           </Button>
           <Grid container>
-            <Grid item xs>
-              <Link to="#" className="text-blue-500">
-                Forgot password?
-              </Link>
-            </Grid>
+            {/* <Grid item xs> */}
+            {/*   <Link to="#" className="text-blue-500"> */}
+            {/*     Forgot password? */}
+            {/*   </Link> */}
+            {/* </Grid> */}
             <Grid item>
               <Link to="/register" className="text-blue-500">
                 {"Don't have an account? Sign Up"}

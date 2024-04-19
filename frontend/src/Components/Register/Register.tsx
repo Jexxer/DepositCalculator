@@ -3,8 +3,6 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -22,13 +20,14 @@ type User = {
 
 export default function Register() {
   const navigate = useNavigate();
-
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<User>({
     firstName: "",
     lastName: "",
   });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setBtnDisabled(true);
     event.preventDefault();
     const formDataRegister = new FormData(event.currentTarget);
     const data = {
@@ -48,6 +47,7 @@ export default function Register() {
     if (registerResult.status === 200) {
       navigate("/login");
     }
+    setBtnDisabled(false);
   };
 
   return (
@@ -125,14 +125,15 @@ export default function Register() {
                 autoComplete="new-password"
               />
             </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I want to receive inspiration, marketing promotions and updates via email."
-              />
-            </Grid>
+            {/* <Grid item xs={12}> */}
+            {/*   <FormControlLabel */}
+            {/*     control={<Checkbox value="allowExtraEmails" color="primary" />} */}
+            {/*     label="I want to receive inspiration, marketing promotions and updates via email." */}
+            {/*   /> */}
+            {/* </Grid> */}
           </Grid>
           <Button
+            disabled={btnDisabled}
             type="submit"
             fullWidth
             variant="contained"
@@ -142,7 +143,7 @@ export default function Register() {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/login" variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>

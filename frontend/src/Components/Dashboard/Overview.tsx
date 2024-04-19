@@ -1,4 +1,4 @@
-import { useAppSelector } from "@/Redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/Redux/hooks";
 import {
   Box,
   Card,
@@ -19,10 +19,11 @@ import MonetizationOnTwoToneIcon from "@mui/icons-material/MonetizationOnTwoTone
 import SavingsTwoToneIcon from "@mui/icons-material/SavingsTwoTone";
 import AccountBalanceTwoToneIcon from "@mui/icons-material/AccountBalanceTwoTone";
 import CelebrationTwoToneIcon from "@mui/icons-material/CelebrationTwoTone";
-import { useState } from "react";
 import QuestionMark from "@mui/icons-material/QuestionMark";
 import { BankAccountType, IncomeType, PortfolioType } from "@/Types";
 import Dinero from "dinero.js";
+import { axiosInstance } from "@/Axios";
+import { fetchPortfolio } from "@/Redux/Slices/PortfolioSlice";
 
 type Props = {
   paperProps?: PaperProps;
@@ -30,17 +31,25 @@ type Props = {
 
 const Overview = (props: Props) => {
   const { paperProps } = props;
+  const dispatch = useAppDispatch();
   const format = "$0,0.00";
   const portfolio = useAppSelector((state) => state.portfolio);
+  const splitMethod = portfolio.splitMethod;
   const { incomes, bankAccounts, expenses } = portfolio;
   const checkings = bankAccounts.filter((b) => b.type === 0);
   const savings = bankAccounts.filter((b) => b.type === 1);
-  const [expenseSplit, setExpenseSplit] = useState<string>("income");
-  const handleSplitChange = (
+
+  const handleSplitChange = async (
     _event: React.MouseEvent<HTMLElement>,
-    newValue: string,
+    newValue: number,
   ) => {
-    setExpenseSplit(newValue);
+    if (newValue === null) return;
+    const res = await axiosInstance.put(
+      `/portfolios/${portfolio.id}/splitMethod?splitMethod=${newValue}`,
+    );
+    if (res.status === 200) {
+      dispatch(fetchPortfolio());
+    }
   };
 
   const getDepositAmountIncome = (
@@ -401,13 +410,11 @@ const Overview = (props: Props) => {
             size="small"
             color="primary"
             exclusive
-            value={expenseSplit}
+            value={splitMethod}
             onChange={handleSplitChange}
           >
-            <Tooltip title="Incentive for partners to grow independently.">
-              <ToggleButton value="income">Income Based</ToggleButton>
-            </Tooltip>
-            <ToggleButton value="half">50/50</ToggleButton>
+            <ToggleButton value={0}>Income Based</ToggleButton>
+            <ToggleButton value={1}>Equally</ToggleButton>
           </ToggleButtonGroup>
         </Stack>
       </Stack>
@@ -461,11 +468,12 @@ const Overview = (props: Props) => {
                       </Stack>
                       <Divider />
                       {checkings.map((b) => {
+                        if (b.isRemainder) return;
                         let amount = Dinero({ amount: 0, currency: "USD" });
-                        if (expenseSplit === "income") {
+                        if (splitMethod === 0) {
                           amount = getDepositAmountIncome(income, b, portfolio);
                         }
-                        if (expenseSplit === "half") {
+                        if (splitMethod === 1) {
                           amount = getDepositAmountEqual(income, b, portfolio);
                         }
                         totalExpensesAmount = totalExpensesAmount.add(amount);
@@ -488,10 +496,10 @@ const Overview = (props: Props) => {
                       })}
                       {savings.map((b) => {
                         let amount = Dinero({ amount: 0, currency: "USD" });
-                        if (expenseSplit === "income") {
+                        if (splitMethod === 0) {
                           amount = getSavingsIncome(income, b);
                         }
-                        if (expenseSplit === "half") {
+                        if (splitMethod === 1) {
                           amount = getSavingsEqual(income, b);
                         }
                         totalSavingsAmount = totalSavingsAmount.add(amount);
@@ -516,7 +524,7 @@ const Overview = (props: Props) => {
                       <Stack spacing={1} direction="row" width="100%">
                         <CelebrationTwoToneIcon color="success" />
                         <Typography width="60%" variant="body1">
-                          Remainder
+                          {income.bankAccount.name || "Remainder"}
                         </Typography>
                         <Typography width="40%" variant="body1">
                           {incomeAmount

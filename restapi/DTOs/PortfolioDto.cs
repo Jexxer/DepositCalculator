@@ -4,6 +4,7 @@ namespace restapi.DTOs
     {
         public int Id { get; set; }
         public string? Name { get; set; }
+        public SplitMethod SplitMethod { get; set; }
         public ICollection<ApplicationUserDto>? UserAccess { get; set; }
         public ICollection<BankAccountDto>? BankAccounts { get; set; }
         public ICollection<BudgetDto>? Budgets { get; set; }

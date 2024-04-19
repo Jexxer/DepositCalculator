@@ -58,6 +58,7 @@ const AddIncomeForm = (props: IncomeFormProps) => {
   const portfolio = useAppSelector((state) => state.portfolio);
   const bankAccounts = portfolio.bankAccounts;
   const checkingAccounts = bankAccounts.filter((b) => b.type === 0);
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormDataType>({
     name: "",
     amount: 0.0,
@@ -65,16 +66,18 @@ const AddIncomeForm = (props: IncomeFormProps) => {
     portfolioId: portfolio.id,
     isInsuranceProvider: false,
     insuranceAmount: 0.0,
-    bankAccountId: undefined,
+    bankAccountId: checkingAccounts[0].id,
   });
 
-  const handleSubmit = () => {
-    axiosInstance.post("/incomes", formData).then((res) => {
+  const handleSubmit = async () => {
+    setBtnDisabled(true);
+    await axiosInstance.post("/incomes", formData).then((res) => {
       if (res.status === 201) {
         dispatch(fetchPortfolio());
         setOpen(false);
       }
     });
+    setBtnDisabled(false);
   };
   return (
     <Stack sx={modalStyle} spacing={2}>
@@ -112,13 +115,14 @@ const AddIncomeForm = (props: IncomeFormProps) => {
         }}
       />
       <FormControl fullWidth required>
-        <InputLabel id="pay-frequency-select-label">Pay Frequency</InputLabel>
+        <InputLabel htmlFor="pay-frequency-select-label">
+          Pay Frequency
+        </InputLabel>
         <Select
           size="small"
-          labelId="pay-frequency-select-label"
-          id="pay-frequency-select"
           value={formData.payFrequency.toString()}
           label="Pay Frequency"
+          inputProps={{ id: "pay-frequency-select-label" }}
           onChange={(e: SelectChangeEvent) => {
             setFormData((prev) => {
               return {
@@ -143,15 +147,14 @@ const AddIncomeForm = (props: IncomeFormProps) => {
         alignItems="center"
       >
         <FormControl fullWidth required>
-          <InputLabel id="pay-frequency-select-label">
+          <InputLabel htmlFor="remaining-select-label">
             Remaining funds account
           </InputLabel>
           <Select
             size="small"
-            labelId="pay-frequency-select-label"
-            id="pay-frequency-select"
             value={formData.bankAccountId?.toString() || ""}
             label="Remaining funds account"
+            inputProps={{ id: "remaining-select-label" }}
             onChange={(e: SelectChangeEvent) => {
               setFormData((prev) => {
                 return {
@@ -187,6 +190,7 @@ const AddIncomeForm = (props: IncomeFormProps) => {
           <FormControlLabel
             control={
               <Checkbox
+                id="insurance-provider-checkbox"
                 checked={formData.isInsuranceProvider}
                 onChange={(e) => {
                   if (!e.target.checked) {
@@ -232,7 +236,7 @@ const AddIncomeForm = (props: IncomeFormProps) => {
         />
       )}
       <Divider />
-      <Button onClick={handleSubmit} variant="contained">
+      <Button disabled={btnDisabled} onClick={handleSubmit} variant="contained">
         Add Income
       </Button>
       <Button onClick={() => setOpen(false)} variant="contained" color="error">

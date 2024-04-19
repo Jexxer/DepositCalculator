@@ -46,7 +46,7 @@ const EditBankAccountForm = (props: BankAccountFormProps) => {
   const { setOpen, initialFormData } = props;
   const dispatch = useAppDispatch();
   const portfolio = useAppSelector((state) => state.portfolio);
-
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormDataType>({
     id: initialFormData.id,
     name: initialFormData.name,
@@ -57,13 +57,17 @@ const EditBankAccountForm = (props: BankAccountFormProps) => {
     amount: initialFormData.amount,
   });
 
-  const handleSubmit = () => {
-    axiosInstance.put(`/bankaccounts/${formData.id}`, formData).then((res) => {
-      if (res.status === 200) {
-        dispatch(fetchPortfolio());
-        setOpen(false);
-      }
-    });
+  const handleSubmit = async () => {
+    setBtnDisabled(true);
+    await axiosInstance
+      .put(`/bankaccounts/${formData.id}`, formData)
+      .then((res) => {
+        if (res.status === 200) {
+          dispatch(fetchPortfolio());
+          setOpen(false);
+        }
+      });
+    setBtnDisabled(false);
   };
   return (
     <Stack sx={modalStyle} spacing={2}>
@@ -81,13 +85,12 @@ const EditBankAccountForm = (props: BankAccountFormProps) => {
         }}
       />
       <FormControl fullWidth>
-        <InputLabel id="bank-account-type-select-label">
+        <InputLabel htmlFor="bank-account-type-select-label">
           Account Type
         </InputLabel>
         <Select
-          labelId="bank-account-type-select-label"
-          id="bank-account-type-select"
           value={formData.type.toString()}
+          inputProps={{ id: "bank-account-type-select-label" }}
           label="Account Type"
           onChange={(e: SelectChangeEvent) => {
             setFormData((prev) => {
@@ -105,7 +108,7 @@ const EditBankAccountForm = (props: BankAccountFormProps) => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleSubmit} variant="contained">
+      <Button disabled={btnDisabled} onClick={handleSubmit} variant="contained">
         Add Account
       </Button>
       <Button onClick={() => setOpen(false)} variant="contained" color="error">
