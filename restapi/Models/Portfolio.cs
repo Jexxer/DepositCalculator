@@ -10,6 +10,9 @@ namespace restapi.Models
         [Required]
         public string? Name { get; set; }
 
+        // Used in deciding how to split expenses
+        public SplitMethod SplitMethod { get; set; } = 0;
+
         // Navigation properties for related models
         public ICollection<Income> Incomes { get; set; }
         public ICollection<BankAccount> BankAccounts { get; set; }
@@ -35,8 +38,6 @@ namespace restapi.Models
 // Enum for Frequency
 public enum SplitMethod
 {
-    Single,
     IncomeBased,
-    EquallyExpense,
-    EquallyRemainder,
+    Equally,
 }

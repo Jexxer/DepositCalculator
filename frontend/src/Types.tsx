@@ -46,6 +46,7 @@ export type BankAccountType = {
 export type PortfolioType = {
   id: number;
   name: string;
+  splitMethod: number | null;
   bankAccounts: BankAccountType[];
   budgets: BudgetType[];
   expenses: ExpenseType[];
