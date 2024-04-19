@@ -70,7 +70,7 @@ const AddIncomeForm = (props: IncomeFormProps) => {
     portfolioId: portfolio.id,
     isInsuranceProvider: initialFormData.isInsuranceProvider,
     insuranceAmount: initialFormData.insuranceAmount,
-    bankAccountId: initialFormData.bankAccount.id,
+    bankAccountId: initialFormData.bankAccount?.id,
   });
 
   const handleSubmit = async () => {
