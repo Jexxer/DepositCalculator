@@ -61,6 +61,7 @@ const AddIncomeForm = (props: IncomeFormProps) => {
   const portfolio = useAppSelector((state) => state.portfolio);
   const bankAccounts = portfolio.bankAccounts;
   const checkingAccounts = bankAccounts.filter((b) => b.type === 0);
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormDataType>({
     id: initialFormData.id,
     name: initialFormData.name,
@@ -72,13 +73,15 @@ const AddIncomeForm = (props: IncomeFormProps) => {
     bankAccountId: initialFormData.bankAccount.id,
   });
 
-  const handleSubmit = () => {
-    axiosInstance.put(`/incomes/${formData.id}`, formData).then((res) => {
+  const handleSubmit = async () => {
+    setBtnDisabled(true);
+    await axiosInstance.put(`/incomes/${formData.id}`, formData).then((res) => {
       if (res.status === 200) {
         dispatch(fetchPortfolio());
         setOpen(false);
       }
     });
+    setBtnDisabled(false);
   };
   return (
     <Stack sx={modalStyle} spacing={2}>
@@ -229,7 +232,7 @@ const AddIncomeForm = (props: IncomeFormProps) => {
           }));
         }}
       />
-      <Button onClick={handleSubmit} variant="contained">
+      <Button disabled={btnDisabled} onClick={handleSubmit} variant="contained">
         Save Changes
       </Button>
       <Button onClick={() => setOpen(false)} variant="contained" color="error">

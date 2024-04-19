@@ -20,13 +20,14 @@ type User = {
 
 export default function Register() {
   const navigate = useNavigate();
-
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<User>({
     firstName: "",
     lastName: "",
   });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setBtnDisabled(true);
     event.preventDefault();
     const formDataRegister = new FormData(event.currentTarget);
     const data = {
@@ -46,6 +47,7 @@ export default function Register() {
     if (registerResult.status === 200) {
       navigate("/login");
     }
+    setBtnDisabled(false);
   };
 
   return (
@@ -131,6 +133,7 @@ export default function Register() {
             {/* </Grid> */}
           </Grid>
           <Button
+            disabled={btnDisabled}
             type="submit"
             fullWidth
             variant="contained"

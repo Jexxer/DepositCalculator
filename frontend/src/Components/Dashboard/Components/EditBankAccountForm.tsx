@@ -46,7 +46,7 @@ const EditBankAccountForm = (props: BankAccountFormProps) => {
   const { setOpen, initialFormData } = props;
   const dispatch = useAppDispatch();
   const portfolio = useAppSelector((state) => state.portfolio);
-
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormDataType>({
     id: initialFormData.id,
     name: initialFormData.name,
@@ -57,13 +57,17 @@ const EditBankAccountForm = (props: BankAccountFormProps) => {
     amount: initialFormData.amount,
   });
 
-  const handleSubmit = () => {
-    axiosInstance.put(`/bankaccounts/${formData.id}`, formData).then((res) => {
-      if (res.status === 200) {
-        dispatch(fetchPortfolio());
-        setOpen(false);
-      }
-    });
+  const handleSubmit = async () => {
+    setBtnDisabled(true);
+    await axiosInstance
+      .put(`/bankaccounts/${formData.id}`, formData)
+      .then((res) => {
+        if (res.status === 200) {
+          dispatch(fetchPortfolio());
+          setOpen(false);
+        }
+      });
+    setBtnDisabled(false);
   };
   return (
     <Stack sx={modalStyle} spacing={2}>
@@ -104,7 +108,7 @@ const EditBankAccountForm = (props: BankAccountFormProps) => {
           ))}
         </Select>
       </FormControl>
-      <Button onClick={handleSubmit} variant="contained">
+      <Button disabled={btnDisabled} onClick={handleSubmit} variant="contained">
         Add Account
       </Button>
       <Button onClick={() => setOpen(false)} variant="contained" color="error">

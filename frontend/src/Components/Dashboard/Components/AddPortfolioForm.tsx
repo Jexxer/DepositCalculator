@@ -18,12 +18,14 @@ type IncomeFormProps = {
 const AddPortfolioForm = (props: IncomeFormProps) => {
   const { handleClose, setPortfolios } = props;
   const dispatch = useAppDispatch();
+  const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormDataType>({
     name: "",
   });
 
-  const handleSubmit = () => {
-    axiosInstance.post("/portfolios", formData).then((res) => {
+  const handleSubmit = async () => {
+    setBtnDisabled(true);
+    await axiosInstance.post("/portfolios", formData).then((res) => {
       if (res.status === 201) {
         // set local storage
         localStorage.setItem("lastViewedPortfolioId", res.data.id);
@@ -36,6 +38,7 @@ const AddPortfolioForm = (props: IncomeFormProps) => {
         handleClose();
       }
     });
+    setBtnDisabled(false);
   };
   return (
     <Stack sx={modalStyle} spacing={2}>
@@ -52,7 +55,7 @@ const AddPortfolioForm = (props: IncomeFormProps) => {
           });
         }}
       />
-      <Button onClick={handleSubmit} variant="contained">
+      <Button disabled={btnDisabled} onClick={handleSubmit} variant="contained">
         Create Portfolio
       </Button>
       <Button onClick={handleClose} variant="contained" color="error">
