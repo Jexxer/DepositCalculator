@@ -108,6 +108,28 @@ namespace restapi.Endpoints
                 return Results.Ok();
             });
 
+            // Update split method
+            group.MapPut("/{id}/splitmethod", async (int id, int splitMethod, AppDbContext dbContext, HttpContext httpContext) =>
+            {
+                // Get the currently authenticated user's ID
+                var user = httpContext.User;
+                var userId = user.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+                var existingPortfolio = await dbContext.Portfolio
+                    .Where(p => p.UserAccess.Any(u => u.Id == userId))
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                if (existingPortfolio == null)
+                    return Results.NotFound();
+
+                if (splitMethod == 0) existingPortfolio.SplitMethod = SplitMethod.IncomeBased;
+                if (splitMethod == 1) existingPortfolio.SplitMethod = SplitMethod.Equally;
+
+                await dbContext.SaveChangesAsync();
+
+                return Results.Ok();
+            });
+
             // Update portfolio user access
             group.MapPut("/{id}/useraccess/add", async (int id, string email, AppDbContext dbContext, HttpContext httpContext) =>
             {
