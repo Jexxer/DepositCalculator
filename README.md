@@ -85,10 +85,6 @@ To run the application locally, make sure you have the following installed:
 4. Push to the branch (`git push origin feature/AmazingFeature`).
 5. Open a Pull Request.
 
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for more details.
-
 ## Contact
 
 For any questions or feedback, please contact us at [support@depositcalc.com](mailto:support@depositcalc.com).
