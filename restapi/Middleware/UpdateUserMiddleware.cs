@@ -13,12 +13,10 @@ public class UpdateUserMiddleware
 
     public async Task Invoke(HttpContext context, AppDbContext dbContext)
     {
-        Console.WriteLine("MiddleWare has been triggered");
         await _next(context);
 
         if (context.Request.Path.StartsWithSegments("/register") && context.Request.Method == "POST")
         {
-            Console.WriteLine("Path /register found.");
             var email = context.Request.Query["email"].ToString();
             var firstName = context.Request.Query["firstName"].ToString();
             var lastName = context.Request.Query["lastName"].ToString();
@@ -32,7 +30,6 @@ public class UpdateUserMiddleware
                     user.FirstName = firstName;
                     user.LastName = lastName;
                     await dbContext.SaveChangesAsync();
-                    Console.WriteLine("Saved Changes");
                 }
             }
 
