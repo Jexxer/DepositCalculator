@@ -35,7 +35,7 @@ export default function SignIn() {
       .then((res) => {
         if (res.status === 200) {
           dispatch(loginSuccess());
-          navigate("/");
+          navigate("/dashboard");
         }
       });
     setBtnDisabled(false);
