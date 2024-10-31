@@ -29,6 +29,7 @@ namespace restapi.Endpoints
                     .Include(p => p.Incomes)
                     .Include(p => p.Expenses)
                     .Where(p => p.UserAccess.Any(u => u.Id == userId))
+                    .AsSplitQuery()
                     .ToListAsync();
 
                 var portfoliosDtos = mapper.Map<List<PortfolioDto>>(portfolios);
