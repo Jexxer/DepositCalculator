@@ -17,7 +17,7 @@ const ProtectedRoute = (props: Props) => {
   useEffect(() => {
     const checkToken = async () => {
       try {
-        const res = await axiosInstance.get("check-token", {
+        const res = await axiosInstance.get("auth", {
           withCredentials: true,
         });
         if (res.status === 200) dispatch(loginSuccess(res.data));
