@@ -11,8 +11,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
-import type {} from "@mui/x-data-grid/themeAugmentation";
+import type { } from "@mui/x-data-grid/themeAugmentation";
 import Logout from "./Components/Logout/Logout.tsx";
+import Landing from "./Components/Landing/Landing.tsx";
 
 const darkTheme = createTheme({
   palette: {
@@ -125,6 +126,10 @@ const darkTheme = createTheme({
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <Landing />,
+  },
+  {
+    path: "/dashboard",
     element: (
       <ProtectedRoute>
         <App />
