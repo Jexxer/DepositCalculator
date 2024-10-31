@@ -6,7 +6,7 @@ const Logout = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const logout = async () => {
-      await axiosInstance.get("/check-token/logout");
+      await axiosInstance.get("/auth/logout");
       navigate("/");
     };
     logout();
