@@ -23,7 +23,10 @@
 
     /* file alias*/
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@Utils": ["./src/Utils"],
+      "@Utils/*": ["./src/Utils/*"]
+
     }
   },
   "include": ["src"],
