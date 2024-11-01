@@ -1,5 +1,4 @@
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import { Provider } from "react-redux";
@@ -14,6 +13,8 @@ import { CssBaseline } from "@mui/material";
 import type { } from "@mui/x-data-grid/themeAugmentation";
 import Logout from "./Components/Logout/Logout.tsx";
 import Landing from "./Components/Landing/Landing.tsx";
+import Dashboard from "./Components/Dashboard/Dashboard.tsx";
+import ErrorBoundary from "./Components/ErrorBoundary/ErrorBoundary.tsx";
 
 const darkTheme = createTheme({
   palette: {
@@ -127,12 +128,13 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Landing />,
+    errorElement: <ErrorBoundary />
   },
   {
     path: "/dashboard",
     element: (
       <ProtectedRoute>
-        <App />
+        <Dashboard />
       </ProtectedRoute>
     ),
   },
