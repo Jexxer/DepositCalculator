@@ -147,9 +147,9 @@ const Expenses = (props: Props) => {
                 border: 0,
               },
               "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-                {
-                  border: "none",
-                },
+              {
+                border: "none",
+              },
               backgroundColor: "transparent",
             }}
             size="small"
