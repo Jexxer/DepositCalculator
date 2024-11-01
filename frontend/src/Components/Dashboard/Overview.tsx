@@ -15,7 +15,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import MonetizationOnTwoToneIcon from "@mui/icons-material/MonetizationOnTwoTone";
+//import MonetizationOnTwoToneIcon from "@mui/icons-material/MonetizationOnTwoTone";
 import SavingsTwoToneIcon from "@mui/icons-material/SavingsTwoTone";
 import AccountBalanceTwoToneIcon from "@mui/icons-material/AccountBalanceTwoTone";
 import CelebrationTwoToneIcon from "@mui/icons-material/CelebrationTwoTone";
@@ -450,10 +450,10 @@ const Overview = (props: Props) => {
                         justifyContent="center"
                         alignItems="center"
                       >
-                        <MonetizationOnTwoToneIcon
-                          color="success"
-                          sx={{ fontSize: 60 }}
-                        />
+                        {/* <MonetizationOnTwoToneIcon */}
+                        {/*   color="success" */}
+                        {/*   sx={{ fontSize: 60 }} */}
+                        {/* /> */}
                         <Stack spacing={1} justifyContent="center">
                           <Typography alignSelf="center" variant="h6">
                             {income.name}
@@ -468,7 +468,9 @@ const Overview = (props: Props) => {
                       </Stack>
                       <Divider />
                       {checkings.map((b) => {
-                        if (b.isRemainder) return;
+                        if (b.isRemainder) {
+                          return;
+                        }
                         let amount = Dinero({ amount: 0, currency: "USD" });
                         if (splitMethod === 0) {
                           amount = getDepositAmountIncome(income, b, portfolio);
