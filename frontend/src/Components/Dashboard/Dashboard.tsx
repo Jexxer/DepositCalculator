@@ -6,7 +6,6 @@ import Incomes from "./Incomes";
 import Savings from "./Savings";
 import BankAccounts from "./BankAccounts";
 import Portfolios from "./Portfolios";
-import PieCharts from "./Components/PieChart";
 
 const Dashboard = () => {
   return (
@@ -29,7 +28,8 @@ const Dashboard = () => {
         <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
           <Stack spacing={2}>
             <Overview />
-            <PieCharts />
+            {/* <PieCharts /> */}
+            <Expenses />
           </Stack>
         </Grid>
 
@@ -66,9 +66,9 @@ const Dashboard = () => {
               <BankAccounts paperProps={{}} />
             </Grid>
 
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-              <Expenses />
-            </Grid>
+            {/* <Grid item xs={12} sm={12} md={12} lg={12} xl={12}> */}
+            {/*   <Expenses /> */}
+            {/* </Grid> */}
           </Grid>
         </Grid>
       </Grid>
