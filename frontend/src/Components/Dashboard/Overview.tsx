@@ -45,7 +45,7 @@ const Overview = (props: Props) => {
     const testSomething = (portfolio: Portfolio) => {
       for (const income of portfolio.incomes) {
         const res = income.generateDepositPercent(portfolio)
-        //console.log(res)
+        console.log(res)
       }
     }
 
