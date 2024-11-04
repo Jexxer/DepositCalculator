@@ -23,10 +23,6 @@ export class Portfolio {
     this.incomes = portfolio.incomes.map(income => new Income(income));
   }
 
-  getBankAccounts(): BankAccount[] {
-    return this.bankAccounts;
-  }
-
   getTotalExpensesAnnual(): number {
     let totalExpenses = 0;
     for (const expense of this.expenses) {
@@ -113,6 +109,16 @@ export class Portfolio {
       }
     }
     return Number((totalSavings).toFixed(2));
+  }
+
+  getAnnualInsuranceAmount(): number {
+    let amount = 0;
+    for (const income of this.incomes) {
+      if (income.isInsuranceProvider) {
+        amount += income.insuranceAmount * payFrequencyMap[income.payFrequency]
+      }
+    }
+    return amount;
   }
 
 }
