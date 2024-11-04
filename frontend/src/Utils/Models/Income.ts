@@ -36,7 +36,7 @@ export class Income {
     }, 0)
     const incomesAnnualAmount = (this.amount + this.insuranceAmount) * payFrequencyMap[this.payFrequency]
     const percentage = Number((incomesAnnualAmount / portfoliosTotalAnnualIncome))
-    return Number(percentage.toFixed(2))
+    return Number(percentage.toFixed(4))
 
   }
 
@@ -53,31 +53,31 @@ export class Income {
   }
 
   generateDepositPercent(portfolio: Portfolio) {
-    // get the income percentage split with insurance included for fairness
-    const percentage = this.getPercentageOfAllIncomes(portfolio);
-
-    // loop through all bank accounts and update obj
-    const depositInfo = {}
-    for (const bank of portfolio.bankAccounts) {
-      if (bank.type === 0) {
-        const banksAnnualExpensesAmount = bank.expenses.reduce((total, expense) => {
-          const amount = expense.amount
-          const frequency = expenseFrequencyMap[expense.frequency]
-          return total += amount * frequency
-        }, 0)
-        console.log(bank.name, banksAnnualExpensesAmount)
-        const amountResponsibleFor = banksAnnualExpensesAmount * percentage
-        depositInfo[bank.name] = amountResponsibleFor / payFrequencyMap[this.payFrequency]
-      } else if (bank.type === 1) {
-        const annualSavingAmount = portfolio.getTotalAnnualSavings()
-        const amountResponsibleFor = annualSavingAmount * percentage;
-        depositInfo[bank.name] = amountResponsibleFor / payFrequencyMap[this.payFrequency]
-      }
+    const deposit = {
+      aaaincome: this.name
     }
-    const remaining = this.getRemainingAnnually(portfolio)
-    depositInfo[this.bankAccount.name] = remaining
-    depositInfo["percentage"] = percentage
-    console.log(this.name, depositInfo)
+    // check for annual insurance amount
+    const checkingAccounts = portfolio.bankAccounts.filter((b) => b.type === 0)
+    const savingAccounts = portfolio.bankAccounts.filter((b) => b.type === 1)
+    const incomesPercentage = this.getPercentageOfAllIncomes(portfolio);
+    const totalAnnualInsuranceAmount = portfolio.getAnnualInsuranceAmount();
+
+    // loop through all the banks and calc each amount
+    for (const bank of checkingAccounts) {
+      const banksPercentageOfExpenses = bank.getBanksPercentageOfTotalExpenses(portfolio)
+      // get amount owed by percentage of income
+      const amount = (bank.getTotalExpensesAnnually() * incomesPercentage) / payFrequencyMap[this.payFrequency]
+
+      // add the amount owed for insurance insuranceAmount
+      let insuranceAmount = 0;
+      if (totalAnnualInsuranceAmount > 0) {
+        const insuranceAmountAnnual = totalAnnualInsuranceAmount * incomesPercentage
+        insuranceAmount = (insuranceAmountAnnual / payFrequencyMap[this.payFrequency]) * banksPercentageOfExpenses
+      }
+      deposit[bank.name] = amount + insuranceAmount;
+    }
+
+    return deposit;
 
   }
 }
