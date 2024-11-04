@@ -1,5 +1,6 @@
 import { BankAccountType, ExpenseType } from "@/Types";
 import { expenseFrequencyMap } from "@Utils";
+import { Portfolio } from "./Portfolio";
 
 export class BankAccount {
   id: number;
@@ -33,6 +34,12 @@ export class BankAccount {
 
   getTotalExpensesMonthly(): number {
     return Number((this.getTotalExpensesAnnually() / 12).toFixed(2))
+  }
+
+  getBanksPercentageOfTotalExpenses(portfolio: Portfolio): number {
+    const totalExpensesAnnually = portfolio.getTotalExpensesAnnual()
+    const banksExpenses = this.getTotalExpensesAnnually()
+    return Number((banksExpenses / totalExpensesAnnually).toFixed(2))
   }
 
 }
