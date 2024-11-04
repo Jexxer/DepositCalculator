@@ -49,6 +49,15 @@ export class Portfolio {
     return Number(totalIncome.toFixed(2))
   }
 
+  getTotalIncomeAnnuallyWithInsurance(): number {
+    let totalIncome = 0;
+    for (const income of this.incomes) {
+      const frequency = payFrequencyMap[income.payFrequency]
+      totalIncome += (income.amount * income.insuranceAmount) * frequency
+    }
+    return Number(totalIncome.toFixed(2))
+  }
+
   getTotalIncomeMonthly(): number {
     let totalIncome = 0;
     for (const income of this.incomes) {
@@ -76,7 +85,7 @@ export class Portfolio {
     return Number(percentage.toFixed(2))
   }
 
-  getTotalAnnualSavings(): number {
+  getTotalMonthlySavings(): number {
     let totalSavings = 0;
     for (const bank of this.bankAccounts) {
       if (bank.type === 1) {
@@ -89,6 +98,21 @@ export class Portfolio {
       }
     }
     return Number((totalSavings / 12).toFixed(2));
+  }
+
+  getTotalAnnualSavings(): number {
+    let totalSavings = 0;
+    for (const bank of this.bankAccounts) {
+      if (bank.type === 1) {
+        if (bank.isPercentage) {
+          const totalIncome = this.getTotalIncomeAnnually()
+          totalSavings += totalIncome * (bank.percentageAmount / 100)
+        } else {
+          totalSavings += bank.amount * 12
+        }
+      }
+    }
+    return Number((totalSavings).toFixed(2));
   }
 
 }
