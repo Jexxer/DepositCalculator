@@ -2,7 +2,10 @@ import { Fragment } from "react";
 import { Disclosure, Menu, Transition, DisclosureButton, MenuButton, MenuItems, MenuItem, DisclosurePanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
-const navigation = [{ name: "Dashboard", href: "/dashboard", current: true }];
+const navigation = [
+  { name: "Dashboard", href: "/dashboard", current: true },
+  { name: "Insights", href: "/insights", current: false }
+];
 const userNavigation = [
   { label: "Profile", href: "/profile" },
   { label: "Settings", href: "/settings" },
