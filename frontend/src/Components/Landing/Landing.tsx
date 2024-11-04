@@ -1,5 +1,3 @@
-'use client'
-
 import { useState } from 'react'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import {
@@ -12,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import DashboardImage from "../../assets/temp_site_dashboard.png"
+import { useAppSelector } from '@/Redux/hooks'
 
 const navigation = [
   { name: 'Product', href: '#' },
@@ -127,6 +126,7 @@ function classNames(...classes: string[]) {
 
 export default function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const isAuthenticated = useAppSelector((state) => state.user.isAuthenticated);
 
   return (
     <div className="bg-white">
@@ -161,8 +161,8 @@ export default function Landing() {
             ))}
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a href="/login" className="text-sm/6 font-semibold text-gray-900">
-              Log in <span aria-hidden="true">&rarr;</span>
+            <a href={isAuthenticated ? "/dashboard" : "/dashboard"} className="text-sm/6 font-semibold text-gray-900">
+              {isAuthenticated ? "Dashboard" : "Log in"}<span aria-hidden="true">&rarr;</span>
             </a>
           </div>
         </nav>
