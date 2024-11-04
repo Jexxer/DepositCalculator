@@ -24,6 +24,8 @@ import { BankAccountType, IncomeType, PortfolioType } from "@/Types";
 import Dinero from "dinero.js";
 import { axiosInstance } from "@/Axios";
 import { fetchPortfolio } from "@/Redux/Slices/PortfolioSlice";
+import { useEffect } from "react";
+import { Portfolio } from "@/Utils/Models/Portfolio";
 
 type Props = {
   paperProps?: PaperProps;
@@ -38,6 +40,20 @@ const Overview = (props: Props) => {
   const { incomes, bankAccounts, expenses } = portfolio;
   const checkings = bankAccounts.filter((b) => b.type === 0);
   const savings = bankAccounts.filter((b) => b.type === 1);
+
+  useEffect(() => {
+    const testSomething = (portfolio: Portfolio) => {
+      for (const income of portfolio.incomes) {
+        const res = income.generateDepositPercent(portfolio)
+        //console.log(res)
+      }
+    }
+
+    if (portfolio) {
+      const port = new Portfolio(portfolio)
+      testSomething(port)
+    }
+  }, [portfolio])
 
   const handleSplitChange = async (
     _event: React.MouseEvent<HTMLElement>,
