@@ -24,10 +24,15 @@ export class BankAccount {
     this.expenses = bankAccount.expenses;
   }
 
-  getTotalExpenses(): number {
+  getTotalExpensesAnnually(): number {
     return this.expenses.reduce((total, expense) => {
       const frequency = expenseFrequencyMap[expense.frequency];
       return total + expense.amount * frequency;
     }, 0);
   }
+
+  getTotalExpensesMonthly(): number {
+    return Number((this.getTotalExpensesAnnually() / 12).toFixed(2))
+  }
+
 }
