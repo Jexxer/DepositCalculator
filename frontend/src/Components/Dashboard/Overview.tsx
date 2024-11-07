@@ -44,8 +44,7 @@ const Overview = (props: Props) => {
   useEffect(() => {
     const testSomething = (portfolio: Portfolio) => {
       for (const income of portfolio.incomes) {
-        const res = income.generateDepositPercent(portfolio)
-        console.log(res)
+        const res = income.generateDepositEqual(portfolio)
       }
     }
 
