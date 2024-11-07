@@ -1,3 +1,4 @@
+import Dinero from "dinero.js";
 import expenseFrequencyMap from "../expenseFrequencyMap";
 import payFrequencyMap from "../payFrequencyMap";
 import { BankAccount } from "./BankAccount";
@@ -23,99 +24,107 @@ export class Portfolio {
     this.incomes = portfolio.incomes.map(income => new Income(income));
   }
 
-  getTotalExpensesAnnual(): number {
-    let totalExpenses = 0;
+  getTotalExpensesAnnual(): Dinero.Dinero {
+    let totalExpenses = Dinero({ amount: 0 });
     for (const expense of this.expenses) {
       const frequency = expenseFrequencyMap[expense.frequency]
-      totalExpenses += expense.amount * frequency
+      const amount = Dinero({ amount: Math.round(expense.amount * 100) })
+      const annualAmount = amount.multiply(frequency)
+      totalExpenses = totalExpenses.add(annualAmount)
     }
-    return Number(totalExpenses.toFixed(2))
+    return totalExpenses
   }
 
-  getTotalExpensesMonthly(): number {
-    return Number((this.getTotalExpensesAnnual() / 12).toFixed(2))
+  getTotalExpensesMonthly(): Dinero.Dinero {
+    return this.getTotalExpensesAnnual().divide(12)
   }
 
-  getTotalIncomeAnnually(): number {
-    let totalIncome = 0;
+  getTotalIncomeAnnually(): Dinero.Dinero {
+    let totalIncome = Dinero({ amount: 0 })
     for (const income of this.incomes) {
       const frequency = payFrequencyMap[income.payFrequency]
-      totalIncome += income.amount * frequency
+      const amount = Dinero({ amount: income.amount })
+      const annualAmount = amount.multiply(frequency)
+      totalIncome = totalIncome.add(annualAmount)
     }
-    return Number(totalIncome.toFixed(2))
+    return totalIncome
   }
 
-  getTotalIncomeAnnuallyWithInsurance(): number {
-    let totalIncome = 0;
+  getTotalIncomeAnnuallyWithInsurance(): Dinero.Dinero {
+    let totalIncome = Dinero({ amount: 0 })
     for (const income of this.incomes) {
       const frequency = payFrequencyMap[income.payFrequency]
-      totalIncome += (income.amount * income.insuranceAmount) * frequency
+      const amount = Dinero({ amount: income.amount + income.insuranceAmount })
+      const annualAmount = amount.multiply(frequency)
+      totalIncome = totalIncome.add(annualAmount)
     }
-    return Number(totalIncome.toFixed(2))
+    return totalIncome
   }
 
-  getTotalIncomeMonthly(): number {
-    let totalIncome = 0;
-    for (const income of this.incomes) {
-      const frequency = payFrequencyMap[income.payFrequency]
-      totalIncome += (income.amount * frequency) / 12
-    }
-    return Number(totalIncome.toFixed(2))
+  getTotalIncomeMonthly(): Dinero.Dinero {
+    return this.getTotalIncomeAnnually().divide(12)
   }
 
   getPercentageOfIncome(income: Income): number {
-    const totalIncomeAnnual = this.getTotalIncomeAnnually()
-    const incomeWithInsuranceAnnual = (income.amount + income.insuranceAmount) * payFrequencyMap[income.payFrequency]
-    const percentage = (incomeWithInsuranceAnnual / totalIncomeAnnual) * 100
-    return Number(percentage.toFixed(2));
+    // Get total income of portfolio
+    const totalIncomeAnnual = this.getTotalIncomeAnnuallyWithInsurance()
+
+    // calculate this incomes total annual amount with insurance
+    const amount = Dinero({ amount: income.amount })
+    const insuranceAmount = Dinero({ amount: income.insuranceAmount })
+    const totalAmount = amount.add(insuranceAmount)
+    const frequency = payFrequencyMap[income.payFrequency]
+    const totalAnnualAmount = totalAmount.multiply(frequency)
+
+    const percentage = (totalAnnualAmount.getAmount() / totalIncomeAnnual.getAmount()) * 100
+    return percentage;
   }
 
   getBanksPercentageOfTotalExpenses(bank: BankAccount): number {
     if (bank.isRemainder || bank.type === 1) return 0;
     const totalExpenses = this.getTotalExpensesAnnual()
-    let banksTotalExpenses = 0;
+    const banksTotalExpenses = Dinero({ amount: 0 });
     for (const expense of bank.expenses) {
-      banksTotalExpenses += (expense.amount * expenseFrequencyMap[expense.frequency])
+      const frequency = expenseFrequencyMap[expense.frequency]
+      const amount = Dinero({ amount: bank.amount })
+      const yearlyAmount = amount.multiply(frequency)
+      banksTotalExpenses.add(yearlyAmount)
     }
-    const percentage = (banksTotalExpenses / totalExpenses) * 100
-    return Number(percentage.toFixed(2))
+    const percentage = (banksTotalExpenses.getAmount() / totalExpenses.getAmount()) * 100
+    return percentage
   }
 
-  getTotalMonthlySavings(): number {
-    let totalSavings = 0;
+  getTotalAnnualSavings(): Dinero.Dinero {
+    const totalSavings = Dinero({ amount: 0 });
     for (const bank of this.bankAccounts) {
       if (bank.type === 1) {
         if (bank.isPercentage) {
           const totalIncome = this.getTotalIncomeAnnually()
-          totalSavings += totalIncome * (bank.percentageAmount / 100)
+          const banksPercentage = totalIncome.percentage(bank.percentageAmount)
+          totalSavings.add(banksPercentage)
         } else {
-          totalSavings += bank.amount
+          const staticSavingAmount = Dinero({ amount: bank.amount })
+          const annualSavingsAmount = staticSavingAmount.multiply(12) // 12 months
+          totalSavings.add(annualSavingsAmount)
         }
       }
     }
-    return Number((totalSavings / 12).toFixed(2));
+    return totalSavings;
   }
 
-  getTotalAnnualSavings(): number {
-    let totalSavings = 0;
-    for (const bank of this.bankAccounts) {
-      if (bank.type === 1) {
-        if (bank.isPercentage) {
-          const totalIncome = this.getTotalIncomeAnnually()
-          totalSavings += totalIncome * (bank.percentageAmount / 100)
-        } else {
-          totalSavings += bank.amount * 12
-        }
-      }
-    }
-    return Number((totalSavings).toFixed(2));
+  getTotalMonthlySavings(): Dinero.Dinero {
+    return this.getTotalAnnualSavings().divide(12);
   }
 
-  getAnnualInsuranceAmount(): number {
-    let amount = 0;
+
+  getAnnualInsuranceAmount(): Dinero.Dinero {
+    let amount = Dinero({ amount: 0 });
     for (const income of this.incomes) {
       if (income.isInsuranceProvider) {
-        amount += income.insuranceAmount * payFrequencyMap[income.payFrequency]
+        const incomeAmount = Dinero({ amount: income.insuranceAmount })
+        const frequency = payFrequencyMap[income.payFrequency]
+        const annualAmount = incomeAmount.multiply(frequency)
+        amount = amount.add(annualAmount)
       }
     }
     return amount;
