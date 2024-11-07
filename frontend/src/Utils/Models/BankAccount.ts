@@ -1,6 +1,7 @@
 import { BankAccountType, ExpenseType } from "@/Types";
 import { expenseFrequencyMap } from "@Utils";
 import { Portfolio } from "./Portfolio";
+import Dinero from "dinero.js";
 
 export class BankAccount {
   id: number;
@@ -19,27 +20,31 @@ export class BankAccount {
     this.portfolioId = bankAccount.portfolioId;
     this.type = bankAccount.type;
     this.isRemainder = bankAccount.isRemainder;
-    this.amount = bankAccount.amount;
+    this.amount = Math.round(bankAccount.amount * 100);
     this.isPercentage = bankAccount.isPercentage;
     this.percentageAmount = bankAccount.percentageAmount;
     this.expenses = bankAccount.expenses;
   }
 
-  getTotalExpensesAnnually(): number {
-    return this.expenses.reduce((total, expense) => {
-      const frequency = expenseFrequencyMap[expense.frequency];
-      return total + expense.amount * frequency;
-    }, 0);
+  getTotalExpensesAnnually(): Dinero.Dinero {
+    let expenseTotal = Dinero({ amount: 0 })
+    for (const expense of this.expenses) {
+      const amount = Dinero({ amount: Math.round(expense.amount * 100) })
+      const frequency = expenseFrequencyMap[expense.frequency]
+      const annualAmount = amount.multiply(frequency)
+      expenseTotal = expenseTotal.add(annualAmount)
+    }
+    return expenseTotal
   }
 
-  getTotalExpensesMonthly(): number {
-    return Number((this.getTotalExpensesAnnually() / 12).toFixed(2))
+  getTotalExpensesMonthly(): Dinero.Dinero {
+    return this.getTotalExpensesAnnually().divide(12)
   }
 
   getBanksPercentageOfTotalExpenses(portfolio: Portfolio): number {
     const totalExpensesAnnually = portfolio.getTotalExpensesAnnual()
     const banksExpenses = this.getTotalExpensesAnnually()
-    return Number((banksExpenses / totalExpensesAnnually).toFixed(2))
+    return banksExpenses.getAmount() / totalExpensesAnnually.getAmount()
   }
 
 }
