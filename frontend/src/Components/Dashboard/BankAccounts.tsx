@@ -20,6 +20,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import MoreVert from "@mui/icons-material/MoreVert";
 import EditBankAccountForm from "./Components/EditBankAccountForm";
 import { Portfolio } from "@/Utils/Models/Portfolio";
+import { payFrequencyMap } from "@/Utils";
 
 type Props = {
   paperProps: PaperProps;
@@ -78,7 +79,7 @@ const BankAccounts = (props: Props) => {
     },
     {
       field: "amount",
-      headerName: "Totals",
+      headerName: "Monthly",
       flex: 1,
       description:
         "Balance is the amount of expenses minus income into the account.",
@@ -93,14 +94,25 @@ const BankAccounts = (props: Props) => {
         const bank = port.bankAccounts.find((b => b.id === params.row.bank.id))
         if (params.row.bank.type === 0) { // if checking account
           if (bank) {
-            amount = bank?.getTotalExpensesMonthly();
+            amount = bank?.getTotalExpensesMonthly().getAmount() / 100;
+            if (bank.isRemainder) {
+              const income = port.incomes.find((i) => i.bankAccount.id === bank.id)
+              if (income) {
+                const deposit = income.generateDeposit(port)
+                if (deposit) {
+                  const annualAmount = deposit[bank.name] * payFrequencyMap[income.payFrequency]
+                  amount = annualAmount / 12
+                }
+
+              }
+            }
           }
         }
         if (params.row.bank.type === 1) { // if savings account
           if (bank) {
             if (bank.isPercentage) {
               const income = port.getTotalIncomeMonthly();
-              amount = Number((income * (bank.percentageAmount / 100)).toFixed(2))
+              amount = Math.round((income.getAmount() * (bank.percentageAmount / 100)) / 100)
             }
           }
 
@@ -148,7 +160,7 @@ const BankAccounts = (props: Props) => {
     if (n === 0) return 52;
     if (n === 1) return 26;
     if (n === 2) return 24;
-    console.log("not a valid pay frequency, options are 1, 2, 3");
+    console.log("not a valid pay frequency, options are 0, 1, 2");
     return 0;
   };
 
@@ -156,7 +168,7 @@ const BankAccounts = (props: Props) => {
     if (n === 0) return 12;
     if (n === 1) return 4;
     if (n === 2) return 1;
-    console.log("not a valid pay frequency, options are 1, 2, 3");
+    console.log("not a valid pay frequency, options are 0, 1, 2");
     return 0;
   };
 
