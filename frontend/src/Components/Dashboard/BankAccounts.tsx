@@ -100,10 +100,13 @@ const BankAccounts = (props: Props) => {
               if (income) {
                 const deposit = income.generateDeposit(port)
                 if (deposit) {
-                  const annualAmount = deposit[bank.name] * payFrequencyMap[income.payFrequency]
-                  amount = annualAmount / 12
+                  const remainderBank = deposit.checkings.find((b) => b.name === income.bankAccount.name)
+                  if (remainderBank) {
+                    if (remainderBank.name === bank.name) {
+                      amount = (deposit.remainder.amount * payFrequencyMap[income.payFrequency]) / 12
+                    }
+                  }
                 }
-
               }
             }
           }
@@ -113,6 +116,8 @@ const BankAccounts = (props: Props) => {
             if (bank.isPercentage) {
               const income = port.getTotalIncomeMonthly();
               amount = Math.round((income.getAmount() * (bank.percentageAmount / 100)) / 100)
+            } else {
+              amount = bank.amount * 12
             }
           }
 
