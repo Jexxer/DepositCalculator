@@ -4,6 +4,20 @@ import { payFrequencyMap } from "@Utils";
 import { Portfolio } from "./Portfolio";
 import Dinero from "dinero.js";
 
+type AccountInfo = {
+  name: string,
+  amount: number
+}
+
+type Deposit = {
+  checkings: AccountInfo[],
+  savings: AccountInfo[],
+  remainder: {
+    name: string,
+    amount: number
+  }
+}
+
 export class Income {
   id: number;
   amount: number;
@@ -62,9 +76,14 @@ export class Income {
     return portfolio.bankAccounts.find((b) => b.id === this.bankAccount.id)
   }
 
-  generateDepositPercent(portfolio: Portfolio) {
-    const deposit = {
-      aaaincome: this.name
+  generateDepositPercent(portfolio: Portfolio): Deposit {
+    const deposit: Deposit = {
+      checkings: [],
+      savings: [],
+      remainder: {
+        name: "Remainder",
+        amount: 0
+      }
     }
 
     let remainder = this.amount
@@ -89,13 +108,19 @@ export class Income {
           const insuranceAdjustment = insurancePerPayPeriod * percentageOfAllExpenses
           const depositAmount = banksDepositPreInsuranceAdjustment - insuranceAdjustment
           remainder -= depositAmount
-          deposit[bank.name] = Math.round(depositAmount) / 100
+          deposit.checkings.push({
+            name: bank.name,
+            amount: Math.round(depositAmount) / 100
+          })
         } else {
           const insurancePerPayPeriod = insuranceOwedAnnually / paychecksPerYear
           const insuranceAdjustment = insurancePerPayPeriod * percentageOfAllExpenses
           const depositAmount = banksDepositPreInsuranceAdjustment + insuranceAdjustment
           remainder -= depositAmount
-          deposit[bank.name] = Math.round(depositAmount) / 100
+          deposit.checkings.push({
+            name: bank.name,
+            amount: Math.round(depositAmount) / 100
+          })
         }
       }
 
@@ -107,13 +132,19 @@ export class Income {
           const portionResponsibleFor = annuallyOwed * percentageOfIncomes
           const owedPerPayCheck = Math.round(portionResponsibleFor / paychecksPerYear)
           remainder -= owedPerPayCheck
-          deposit[bank.name] = owedPerPayCheck / 100
+          deposit.savings.push({
+            name: bank.name,
+            amount: owedPerPayCheck / 100
+          })
         } else {
           const annuallyOwed = bank.amount * 12
           const portionResponsibleFor = annuallyOwed * percentageOfIncomes
           const owedPerPayCheck = Math.round(portionResponsibleFor / paychecksPerYear)
           remainder -= owedPerPayCheck
-          deposit[bank.name] = owedPerPayCheck / 100
+          deposit.savings.push({
+            name: bank.name,
+            amount: owedPerPayCheck / 100
+          })
         }
       }
     }
@@ -121,14 +152,22 @@ export class Income {
 
     const remainingAccountName = this.getRemainingAccount(portfolio)?.name
     if (remainingAccountName) {
-      deposit[remainingAccountName] = Math.round(remainder) / 100
+      deposit.remainder = {
+        name: remainingAccountName,
+        amount: Math.round(remainder) / 100
+      }
     }
     return deposit;
   }
 
   generateDepositEqual(portfolio: Portfolio) {
-    const deposit = {
-      aaaincome: this.name
+    const deposit: Deposit = {
+      checkings: [],
+      savings: [],
+      remainder: {
+        name: "Remainder",
+        amount: 0
+      }
     }
 
     let remainder = this.amount
@@ -153,13 +192,13 @@ export class Income {
           const insuranceAdjustment = insurancePerPayPeriod * percentageOfAllExpenses
           const depositAmount = banksDepositPreInsuranceAdjustment - insuranceAdjustment
           remainder -= depositAmount
-          deposit[bank.name] = Math.round(depositAmount) / 100
+          deposit.checkings.push({ name: bank.name, amount: Math.round(depositAmount) / 100 })
         } else {
           const insurancePerPayPeriod = insuranceOwedAnnually / paychecksPerYear
           const insuranceAdjustment = insurancePerPayPeriod * percentageOfAllExpenses
           const depositAmount = banksDepositPreInsuranceAdjustment + insuranceAdjustment
           remainder -= depositAmount
-          deposit[bank.name] = Math.round(depositAmount) / 100
+          deposit.checkings.push({ name: bank.name, amount: Math.round(depositAmount) / 100 })
         }
       }
 
@@ -171,13 +210,19 @@ export class Income {
           const portionResponsibleFor = annuallyOwed * percentageOfIncomes
           const owedPerPayCheck = Math.round(portionResponsibleFor / paychecksPerYear)
           remainder -= owedPerPayCheck
-          deposit[bank.name] = owedPerPayCheck / 100
+          deposit.savings.push({
+            name: bank.name,
+            amount: owedPerPayCheck / 100
+          })
         } else {
           const annuallyOwed = bank.amount * 12
           const portionResponsibleFor = annuallyOwed * percentageOfIncomes
           const owedPerPayCheck = Math.round(portionResponsibleFor / paychecksPerYear)
           remainder -= owedPerPayCheck
-          deposit[bank.name] = owedPerPayCheck / 100
+          deposit.savings.push({
+            name: bank.name,
+            amount: owedPerPayCheck / 100
+          })
         }
       }
     }
@@ -185,16 +230,20 @@ export class Income {
 
     const remainingAccountName = this.getRemainingAccount(portfolio)?.name
     if (remainingAccountName) {
-      deposit[remainingAccountName] = Math.round(remainder) / 100
+      deposit.remainder = {
+        name: remainingAccountName,
+        amount: Math.round(remainder) / 100
+      }
     }
     return deposit;
 
   }
 
-  generateDeposit(portfolio: Portfolio) {
+  generateDeposit(portfolio: Portfolio): Deposit {
     const splitMethod = portfolio.splitMethod
     if (splitMethod === 0) return this.generateDepositPercent(portfolio)
     if (splitMethod === 1) return this.generateDepositEqual(portfolio)
+    return this.generateDepositPercent(portfolio)
   }
 }
 
