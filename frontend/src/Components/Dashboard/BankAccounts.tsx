@@ -82,7 +82,7 @@ const BankAccounts = (props: Props) => {
       headerName: "Monthly",
       flex: 1,
       description:
-        "Balance is the amount of expenses minus income into the account.",
+        "The Monthly amount entering or leaving an account.",
       renderCell: (params) => {
         const calcColor = (value: number) => {
           if (value < 0) return "#D48181"; // "error"
@@ -94,7 +94,7 @@ const BankAccounts = (props: Props) => {
         const bank = port.bankAccounts.find((b => b.id === params.row.bank.id))
         if (params.row.bank.type === 0) { // if checking account
           if (bank) {
-            amount = bank?.getTotalExpensesMonthly().getAmount() / 100;
+            amount = -bank?.getTotalExpensesMonthly().getAmount() / 100;
             if (bank.isRemainder) {
               const income = port.incomes.find((i) => i.bankAccount.id === bank.id)
               if (income) {
