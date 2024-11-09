@@ -1,10 +1,11 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition, DisclosureButton, MenuButton, MenuItems, MenuItem, DisclosurePanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", current: true },
-  { name: "Insights", href: "/insights", current: false }
+  // { name: "Insights", href: "/insights", current: false }
 ];
 const userNavigation = [
   { label: "Profile", href: "/profile" },
@@ -16,7 +17,12 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function AppNavBar() {
+type Props = {
+  page: string
+}
+
+export default function AppNavBar(props: Props) {
+  const { page } = props;
   return (
     <Disclosure as="nav" className="bg-[#1E5D81]">
       {({ open }) => (
@@ -47,11 +53,11 @@ export default function AppNavBar() {
                 </div>
                 <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
                   {navigation.map((item) => (
-                    <a
+                    <Link
                       key={item.name}
-                      href={item.href}
+                      to={item.href}
                       className={classNames(
-                        item.current
+                        item.href === `/${page}`
                           ? "bg-[#247fca] text-white"
                           : "text-gray-300 hover:bg-[#247fca] hover:text-white",
                         "rounded-md px-3 py-2 text-sm font-medium",
@@ -59,7 +65,7 @@ export default function AppNavBar() {
                       aria-current={item.current ? "page" : undefined}
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               </div>

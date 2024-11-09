@@ -79,7 +79,7 @@ const BankAccounts = (props: Props) => {
     },
     {
       field: "amount",
-      headerName: "Monthly",
+      headerName: "Month",
       flex: 1,
       description:
         "The Monthly amount entering or leaving an account.",
@@ -117,10 +117,68 @@ const BankAccounts = (props: Props) => {
               const income = port.getTotalIncomeMonthly();
               amount = Math.round((income.getAmount() * (bank.percentageAmount / 100)) / 100)
             } else {
-              amount = bank.amount * 12
+              amount = (bank.amount / 100)
             }
           }
+        }
 
+
+        return (
+          <Stack spacing={1} direction="row" height="100%" alignItems="center">
+            <Typography>$</Typography>
+            <Typography color={calcColor(amount)}>
+              {amount.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </Typography>
+          </Stack>
+        );
+      },
+    },
+    {
+      field: "amountYR",
+      headerName: "Annual",
+      flex: 1,
+      description:
+        "The Monthly amount entering or leaving an account.",
+      renderCell: (params) => {
+        const calcColor = (value: number) => {
+          if (value < 0) return "#D48181"; // "error"
+          if (value > 0) return "#66bb6a"; // "success"
+          return "";
+        };
+        let amount = 0;
+        const port = new Portfolio(portfolio);
+        const bank = port.bankAccounts.find((b => b.id === params.row.bank.id))
+        if (params.row.bank.type === 0) { // if checking account
+          if (bank) {
+            amount = -bank?.getTotalExpensesAnnually().getAmount() / 100;
+            if (bank.isRemainder) {
+              const income = port.incomes.find((i) => i.bankAccount.id === bank.id)
+              if (income) {
+                const deposit = income.generateDeposit(port)
+                if (deposit) {
+                  const remainderBank = deposit.checkings.find((b) => b.name === income.bankAccount.name)
+                  if (remainderBank) {
+                    if (remainderBank.name === bank.name) {
+                      amount = (deposit.remainder.amount * payFrequencyMap[income.payFrequency])
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        if (params.row.bank.type === 1) { // if savings account
+          if (bank) {
+            if (bank.isPercentage) {
+              const income = port.getTotalIncomeMonthly();
+              amount = Math.round((income.getAmount() * (bank.percentageAmount / 100)) / 100) * 12
+            } else {
+              amount = (bank.amount / 100) * 12
+            }
+          }
         }
 
 
@@ -223,6 +281,7 @@ const BankAccounts = (props: Props) => {
       type: b.type,
       isRemainer: b.isRemainder,
       amount: b,
+      amountYR: b,
       bank: b,
     };
   });

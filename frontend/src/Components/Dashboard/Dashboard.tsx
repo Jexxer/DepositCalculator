@@ -10,7 +10,7 @@ import Portfolios from "./Portfolios";
 const Dashboard = () => {
   return (
     <>
-      <AppNavBar />
+      <AppNavBar page="dashboard" />
       <Grid container spacing={2} sx={{ p: 2 }}>
         <Box
           component={Grid}

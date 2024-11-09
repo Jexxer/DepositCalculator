@@ -93,6 +93,9 @@ const Overview = (props: Props) => {
           {incomes.map((income) => {
             const incomeObj = new Income(income);
             const deposit = incomeObj.generateDeposit(new Portfolio(portfolio));
+            const sortedCheckings = deposit.checkings.sort((a, b) => b.amount - a.amount)
+            console.log(sortedCheckings)
+            const sortedSavings = deposit.savings.sort((a, b) => b.amount - a.amount)
             return (
               <Grid key={income.id} item xs={12} sm={12} md={12} lg={6} xl={6}>
                 <Card
@@ -127,7 +130,7 @@ const Overview = (props: Props) => {
                         </Stack>
                       </Stack>
                       <Divider />
-                      {deposit?.checkings.map((b, index) => {
+                      {sortedCheckings.map((b, index) => {
                         if (b.amount === 0) {
                           return;
                         }
@@ -148,7 +151,8 @@ const Overview = (props: Props) => {
                           </Stack>
                         );
                       })}
-                      {deposit.savings.map((b, index) => {
+                      <Divider />
+                      {sortedSavings.map((b, index) => {
                         return (
                           <Stack
                             key={index}

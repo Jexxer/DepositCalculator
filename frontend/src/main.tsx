@@ -15,6 +15,7 @@ import Logout from "./Components/Logout/Logout.tsx";
 import Landing from "./Components/Landing/Landing.tsx";
 import Dashboard from "./Components/Dashboard/Dashboard.tsx";
 import ErrorBoundary from "./Components/ErrorBoundary/ErrorBoundary.tsx";
+import Insights from "./Components/Insights/Insights.tsx";
 
 const darkTheme = createTheme({
   palette: {
@@ -135,6 +136,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <Dashboard />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/insights",
+    element: (
+      <ProtectedRoute>
+        <Insights />
       </ProtectedRoute>
     ),
   },
