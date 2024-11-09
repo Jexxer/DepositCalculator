@@ -16,6 +16,7 @@ import Landing from "./Components/Landing/Landing.tsx";
 import Dashboard from "./Components/Dashboard/Dashboard.tsx";
 import ErrorBoundary from "./Components/ErrorBoundary/ErrorBoundary.tsx";
 import Insights from "./Components/Insights/Insights.tsx";
+import ResetPassword from "./Components/ResetPassword/ResetPassword.tsx";
 
 const darkTheme = createTheme({
   palette: {
@@ -158,6 +159,10 @@ const router = createBrowserRouter([
   {
     path: "/logout",
     element: <Logout />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPassword />,
   },
 ]);
 
