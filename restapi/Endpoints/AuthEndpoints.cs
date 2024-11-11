@@ -1,6 +1,7 @@
 
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -32,27 +33,6 @@ namespace restapi.Endpoints
                 return Results.Ok(userDto);
             });
 
-            group.MapPut("/updatename", async (AppDbContext dbContext, string firstName, string lastName, HttpContext httpContext) =>
-            {
-                // Get the currently authenticated user's ID
-                var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-                // Get user object
-                var user = await dbContext.Users.FindAsync(userId);
-                if (user == null)
-                {
-                    return Results.NotFound();
-                }
-
-                // update names
-                user.FirstName = firstName;
-                user.LastName = lastName;
-
-                await dbContext.SaveChangesAsync();
-
-                return Results.Ok();
-            });
-
             group.MapGet("/logout", (HttpContext httpContext) =>
             {
                 httpContext.Response.Cookies.Delete(".AspNetCore.Identity.Application");
@@ -78,10 +58,10 @@ namespace restapi.Endpoints
                 return Results.BadRequest("Error confirming email.");
             });
 
-            group.MapPost("/reset-password", async (UserManager<ApplicationUser> userManager, IEmailSender emailSender, string email) =>
+            group.MapPost("/reset-password", async (UserManager<ApplicationUser> userManager, IEmailSender emailSender, EmailPost post) =>
             {
                 // Find the user by email
-                var user = await userManager.FindByEmailAsync(email);
+                var user = await userManager.FindByEmailAsync(post.Email);
                 if (user == null)
                 {
                     return Results.BadRequest("User not found.");
@@ -89,7 +69,7 @@ namespace restapi.Endpoints
 
                 // Generate password reset token
                 var code = await userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = $"https://localhost:5045/reset-password?userId={user.Id}&code={Uri.EscapeDataString(code)}";
+                var callbackUrl = $"https://depositcalc.com/reset-password-confirm?userId={user.Id}&code={Uri.EscapeDataString(code)}";
 
                 // Send password reset email
                 await emailSender.SendEmailAsync(user.Email!, "Reset your password",
@@ -98,20 +78,20 @@ namespace restapi.Endpoints
                 return Results.Ok("Password reset email sent.");
             });
 
-            group.MapPost("/reset-password-confirm", async (UserManager<ApplicationUser> userManager, string userId, string code, string newPassword) =>
+            group.MapPost("/reset-password-confirm", async (UserManager<ApplicationUser> userManager, ResetPasswordConfirmPost post) =>
             {
                 // Find the user by userId
-                var user = await userManager.FindByIdAsync(userId);
+                var user = await userManager.FindByIdAsync(post.UserId);
                 if (user == null)
                 {
                     return Results.NotFound("User not found.");
                 }
 
                 // Decode the token
-                var decodedCode = Uri.UnescapeDataString(code);
+                var decodedCode = Uri.UnescapeDataString(post.Code);
 
                 // Reset the password
-                var result = await userManager.ResetPasswordAsync(user, decodedCode, newPassword);
+                var result = await userManager.ResetPasswordAsync(user, decodedCode, post.NewPassword);
                 if (result.Succeeded)
                 {
                     return Results.Ok("Password reset successfully.");
@@ -126,10 +106,25 @@ namespace restapi.Endpoints
                 return Results.BadRequest("Error resetting password.");
             });
 
-
-
-
             return group;
         }
     }
+}
+
+class EmailPost
+{
+    [JsonPropertyName("email")]
+    public required string Email { get; set; }
+}
+
+class ResetPasswordConfirmPost
+{
+    [JsonPropertyName("userId")]
+    public required string UserId { get; set; }
+
+    [JsonPropertyName("code")]
+    public required string Code { get; set; }
+
+    [JsonPropertyName("newPassword")]
+    public required string NewPassword { get; set; }
 }
