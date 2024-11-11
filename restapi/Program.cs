@@ -1,13 +1,14 @@
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using restapi.Data;
 using restapi.Endpoints;
-using restapi.Models;
 using restapi.Managers;
-using Microsoft.AspNetCore.CookiePolicy;
+using restapi.Models;
+using restapi.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 // Authorization
 builder.Services.AddAuthorization();
@@ -31,19 +32,27 @@ builder.Services.PostConfigure<CookiePolicyOptions>(options =>
 var connectionString = Environment.GetEnvironmentVariable("CONNSTRING");
 
 // Configure DbContext with PostgreSQL
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
 // Configure identity database access via EF Core, using custom ApplicationUser
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+builder
+    .Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+    {
+        // Configure identity options if needed
+        options.SignIn.RequireConfirmedEmail = false;
+    })
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddUserManager<CustomUserManager>()
+    .AddDefaultTokenProviders()
+    .AddDefaultUI();
+
+// Email Sender
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+//builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration.GetSection("AuthMessageSenderOptions"));
+builder.Services.Configure<AuthMessageSenderOptions>(options =>
 {
-    // Configure identity options if needed
-    options.SignIn.RequireConfirmedEmail = false;
-})
-.AddEntityFrameworkStores<AppDbContext>()
-.AddUserManager<CustomUserManager>()
-.AddDefaultTokenProviders()
-.AddDefaultUI();
+    options.SendGridKey = Environment.GetEnvironmentVariable("SENDGRIDKEY");
+});
 
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
@@ -59,7 +68,7 @@ app.MapBudgetEndpoints().RequireAuthorization();
 app.MapExpenseEndpoints().RequireAuthorization();
 app.MapIncomeEndpoints().RequireAuthorization();
 app.MapPortfolioEndpoints().RequireAuthorization();
-app.MapAuthEndpoints().RequireAuthorization();
+app.MapAuthEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -68,13 +77,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors(x => x
-    .AllowAnyMethod()
-    .AllowAnyHeader()
-    .SetIsOriginAllowed(origin => true)
-    .AllowCredentials());
+app.UseCors(x =>
+    x.AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowed(origin => true).AllowCredentials()
+);
 app.UseAuthorization();
 
 // Middleware for adding first and last names
@@ -84,4 +91,3 @@ app.UseMiddleware<UpdateUserMiddleware>();
 app.MapIdentityApi<ApplicationUser>();
 
 app.Run();
-
