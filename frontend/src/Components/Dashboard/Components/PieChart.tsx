@@ -60,7 +60,7 @@ const PieCharts = () => {
         if (bank.type === 1) {
           if (bank.isPercentage) {
             const annualIncome = port.getTotalIncomeAnnually();
-            const annualSavingsForAccount = (annualIncome * (bank.percentageAmount / 100))
+            const annualSavingsForAccount = (annualIncome.getAmount() * (bank.percentageAmount / 100))
             const amount = annualSavingsForAccount / 12
             totalAmountPerMonth += Number(amount.toFixed(2))
             data.push({
@@ -96,7 +96,7 @@ const PieCharts = () => {
         }
       }
 
-      const remainingAmount = port.getTotalIncomeMonthly() - totalAmountPerMonth
+      const remainingAmount = port.getTotalIncomeMonthly().getAmount() - totalAmountPerMonth
       totalAmountPerMonth += remainingAmount;
 
       data.push({
