@@ -69,6 +69,15 @@ namespace restapi.Endpoints
                     income.InsuranceAmount = 0.0m;
                 }
 
+                // update bank account IsRemainder
+                var bankAccount = await dbContext.BankAccount
+                    .Where(b => b.Portfolio!.UserAccess.Any(u => u.Id == userId))
+                    .FirstOrDefaultAsync(b => b.Id == income.BankAccountId);
+                if (bankAccount != null)
+                {
+                    bankAccount.IsRemainder = true;
+                }
+
                 // Create and save income 
                 dbContext.Income.Add(income);
                 await dbContext.SaveChangesAsync();
@@ -103,16 +112,18 @@ namespace restapi.Endpoints
                     .FirstOrDefaultAsync(b => b.Id == income.BankAccountId);
                 var existingBank = await dbContext.BankAccount.FindAsync(existingIncome.BankAccountId);
 
-                // replace current bank account with new bank account
-                if (bankAccount != null)
+                // ensure isRemaining is correct
+                if (bankAccount != null && existingBank != null && bankAccount.Id != existingBank.Id)
                 {
                     bankAccount.IsRemainder = true;
-                }
-                if (existingBank != null)
-                {
                     existingBank.IsRemainder = false;
                 }
 
+                // if they are the same, ensure isRemaining is correct
+                if (bankAccount != null && existingBank != null && bankAccount.Id == existingBank.Id)
+                {
+                    bankAccount.IsRemainder = true;
+                }
 
                 existingIncome.BankAccountId = income.BankAccountId;
                 existingIncome.BankAccount = bankAccount;
