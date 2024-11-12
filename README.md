@@ -63,6 +63,7 @@ To run the application locally, make sure you have the following installed:
 
    ```bash
    cd restapi
+   dotnet restore
    dotnet run
    ```
 
